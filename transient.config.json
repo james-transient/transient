@@ -6,8 +6,8 @@
     "intelligence": true
   },
   "trace": {
-    "receipt_store": "~/.transient-audit/receipts",
-    "state_dir": "~/.transient-audit"
+    "receipt_store": "~/transient-audit/receipts",
+    "state_dir": "~/transient-audit"
   },
   "recall": {
     "endpoint": "http://localhost:8090",

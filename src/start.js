@@ -28,11 +28,11 @@ export async function start(config) {
       // Checkpoint on process exit
       process.on('SIGINT', async () => {
         console.log('\n[recall] checkpointing session...');
-        await recall.checkpoint('exit', 'Transient session ended');
+        try { await recall.checkpoint('exit', 'Transient session ended'); } catch {}
         process.exit(0);
       });
       process.on('SIGTERM', async () => {
-        await recall.checkpoint('exit', 'Transient session ended');
+        try { await recall.checkpoint('exit', 'Transient session ended'); } catch {}
         process.exit(0);
       });
     }
@@ -49,18 +49,19 @@ export async function start(config) {
 
   // Log all events to console in a readable format
   bus.on('event', (event) => {
-    if (event.type === 'session_start') {
-      console.log(`[trace] new session: ${event.sessionId}`);
-    }
-    if (event.type === 'action') {
-      const outcome = event.receipt?.decision?.outcome || '?';
-      const action = event.receipt?.intent?.action || 'unknown';
-      const icon = outcome === 'allow' ? '✓' : '✗';
-      console.log(`[trace] ${icon} ${outcome.padEnd(7)} ${action}`);
+    if (event.type === 'batch') {
+      const { total, allowed, blocked, sessions, content } = event.batch;
+      if (total > 0) {
+        console.log(`[trace] ${allowed} allowed  ${blocked} blocked  ${content.length} content  ${sessions.size} sessions`);
+      }
     }
     if (event.type === 'blocked') {
+      const action = event.receipt?.intent?.action || 'unknown';
       const reason = event.receipt?.decision?.reason_code || '';
-      console.log(`[trace] blocked: ${event.action} — ${reason}`);
+      console.log(`[trace] ✗ BLOCKED  ${action} — ${reason}`);
+    }
+    if (event.type === 'content') {
+      console.log(`[trace] ◆ ${event.action}`);
     }
   });
 

@@ -1,28 +1,27 @@
 /**
  * receipt-bus.js
  *
- * The core of the unified Transient wrapper.
+ * Pull-based receipt processor. Polls the receipt store every 30 seconds
+ * and dispatches batched events to subscribers.
  *
- * Watches the Trace receipt store for new receipts using OS-level FSEvents
- * (macOS) or inotify (Linux) via chokidar. Every new receipt is parsed and
- * dispatched to registered subscribers.
- *
- * Recall and Intelligence never need to be called by the agent. They subscribe
- * here and react automatically to the receipt stream.
+ * Pull not push — no matter how many receipts land per minute, subscribers
+ * get called once per poll interval with a summary. This is robust on any
+ * machine regardless of agent activity volume.
  */
 
-import { watch } from 'chokidar';
-import { readFileSync, existsSync, mkdirSync } from 'fs';
-import { resolve } from 'path';
+import { readdirSync, readFileSync, existsSync, mkdirSync, statSync } from 'fs';
+import { resolve, join } from 'path';
 import EventEmitter from 'events';
+
+const POLL_INTERVAL_MS = 30_000; // 30 seconds
 
 export class ReceiptBus extends EventEmitter {
   constructor(receiptStore) {
     super();
     this.receiptStore = resolve(receiptStore);
-    this.watcher = null;
     this.subscribers = [];
-    this.seenSessions = new Set();
+    this.lastProcessedTime = Date.now() - POLL_INTERVAL_MS; // process last 30s on startup
+    this.timer = null;
   }
 
   start() {
@@ -30,33 +29,19 @@ export class ReceiptBus extends EventEmitter {
       mkdirSync(this.receiptStore, { recursive: true });
     }
 
-    console.log(`[receipt-bus] watching ${this.receiptStore}`);
+    console.log(`[receipt-bus] polling ${this.receiptStore} every 30s`);
 
-    this.watcher = watch(this.receiptStore, {
-      persistent: true,
-      ignoreInitial: true,  // only react to new receipts, not existing ones on startup
-      awaitWriteFinish: {
-        stabilityThreshold: 50,
-        pollInterval: 20,
-      },
-    });
-
-    this.watcher.on('add', (filePath) => {
-      if (!filePath.endsWith('.json')) return;
-      this._dispatch(filePath);
-    });
-
-    this.watcher.on('error', (err) => {
-      console.error('[receipt-bus] watcher error:', err);
-    });
+    // Poll immediately then on interval
+    this._poll();
+    this.timer = setInterval(() => this._poll(), POLL_INTERVAL_MS);
 
     return this;
   }
 
   stop() {
-    if (this.watcher) {
-      this.watcher.close();
-      this.watcher = null;
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
     }
   }
 
@@ -64,42 +49,78 @@ export class ReceiptBus extends EventEmitter {
     this.subscribers.push(subscriber);
   }
 
-  _dispatch(filePath) {
-    let receipt;
+  _poll() {
+    const since = this.lastProcessedTime;
+    this.lastProcessedTime = Date.now();
+
+    let files;
     try {
-      receipt = JSON.parse(readFileSync(filePath, 'utf8'));
-    } catch (err) {
-      console.error(`[receipt-bus] failed to parse receipt ${filePath}:`, err.message);
+      files = readdirSync(this.receiptStore).filter(f => f.endsWith('.json'));
+    } catch {
       return;
     }
 
-    const sessionId = receipt?.intent?.context?.sessionId;
-    const isNewSession = sessionId && !this.seenSessions.has(sessionId);
+    // Only process files newer than last poll
+    const newFiles = files.filter(f => {
+      try {
+        const stat = statSync(join(this.receiptStore, f));
+        return stat.mtimeMs > since;
+      } catch {
+        return false;
+      }
+    });
 
-    if (isNewSession) {
-      this.seenSessions.add(sessionId);
-      this._notify({ type: 'session_start', sessionId, receipt });
+    if (newFiles.length === 0) return;
+
+    const batch = {
+      total: newFiles.length,
+      allowed: 0,
+      blocked: 0,
+      content: [],
+      sessions: new Set(),
+      receipts: [],
+    };
+
+    for (const file of newFiles) {
+      try {
+        const receipt = JSON.parse(readFileSync(join(this.receiptStore, file), 'utf8'));
+        batch.receipts.push(receipt);
+
+        const outcome = receipt?.decision?.outcome || receipt?.receipt?.outcome;
+        const action = receipt?.intent?.action || '';
+        const actionClass = receipt?.intent?.action_class || '';
+        const sessionId = receipt?.intent?.context?.runId || receipt?.intent?.context?.sessionId;
+
+        if (sessionId) batch.sessions.add(sessionId);
+
+        if (outcome === 'allow') batch.allowed++;
+        if (outcome === 'deny' || receipt?.type === 'GovernanceDenyEvent') {
+          batch.blocked++;
+          this._notify({ type: 'blocked', action, actionClass, receipt });
+        }
+
+        if (outcome === 'allow' && this._isContentEvent(action, actionClass)) {
+          batch.content.push({ action, actionClass, receipt });
+        }
+      } catch {
+        // skip malformed
+      }
     }
 
-    this._notify({ type: 'action', receipt });
+    // Dispatch batch summary
+    this._notify({ type: 'batch', batch });
 
-    // Content events — file writes, git operations, network requests
-    const action = receipt?.intent?.action || '';
-    const actionClass = receipt?.intent?.action_class || '';
-    const outcome = receipt?.decision?.outcome;
-
-    if (outcome === 'allow' && this._isContentEvent(action, actionClass)) {
-      this._notify({ type: 'content', action, actionClass, receipt });
+    // Dispatch content events
+    for (const c of batch.content) {
+      this._notify({ type: 'content', ...c });
     }
 
-    if (outcome === 'deny' || receipt?.type === 'GovernanceDenyEvent') {
-      this._notify({ type: 'blocked', action, actionClass, receipt });
-    }
+    console.log(`[receipt-bus] processed ${newFiles.length} receipts — ${batch.allowed} allowed, ${batch.blocked} blocked, ${batch.content.length} content events`);
   }
 
   _isContentEvent(action, actionClass) {
-    const contentActions = ['git', 'write', 'curl', 'npm', 'pip', 'uv'];
-    const contentClasses = ['write_low', 'write_high', 'network_egress'];
+    const contentActions = ['git', 'curl', 'npm', 'pip', 'uv'];
+    const contentClasses = ['write_low', 'write_high', 'exec', 'network'];
     return (
       contentActions.some(a => action.toLowerCase().includes(a)) ||
       contentClasses.includes(actionClass)

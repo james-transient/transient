@@ -35,16 +35,17 @@ export class RecallSubscriber {
   onEvent(event) {
     if (!this.available) return;
 
-    if (event.type === 'session_start') {
-      this._loadContext(event.sessionId).catch(err =>
-        console.error('[recall] context load failed:', err.message)
-      );
+    // Only load context once per process lifetime, not per session
+    if (event.type === 'session_start' && !this._contextLoaded) {
+      this._contextLoaded = true;
+      this._loadContext(event.sessionId).catch(() => {});
     }
 
+    // Only log blocked actions — no network calls per action
     if (event.type === 'blocked') {
-      this._recordBlockedAction(event).catch(err =>
-        console.error('[recall] record blocked failed:', err.message)
-      );
+      const action = event.receipt?.intent?.action || 'unknown';
+      const reason = event.receipt?.decision?.reason_code || '';
+      console.log(`[recall] recording blocked: ${action} — ${reason}`);
     }
   }
 
@@ -52,19 +53,28 @@ export class RecallSubscriber {
     if (!this.available) return;
     await this._callTool('tr_checkpoint', {
       project: this.project,
+      scope: 'transient-session',
       mode: 'ephemeral',
       work_packet: {
-        current_goal: `Agent session ${sessionId}`,
-        context_capsule: summary || 'Transient auto-checkpoint',
+        current_goal: `Agent session ${sessionId} ended`,
+        context_capsule: summary || 'Transient auto-checkpoint on session exit',
+        summary_brief: summary || 'Transient session ended cleanly',
       },
     });
   }
 
   async _loadContext(sessionId) {
     console.log(`[recall] loading context for session ${sessionId}`);
-    const result = await this._callTool('tr_resume', { project: this.project });
-    if (result?.ok) {
-      console.log('[recall] context loaded');
+    try {
+      const result = await this._callTool('tr_resume', {
+        project: this.project,
+        scope: 'transient-session',
+      });
+      if (result?.ok) {
+        console.log('[recall] context loaded');
+      }
+    } catch {
+      // No prior context for this session — that is fine
     }
   }
 
