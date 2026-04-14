@@ -13,12 +13,14 @@
 export class IntelligenceSubscriber {
   constructor(config) {
     this.endpoint = config.endpoint;
+    this.config = config;
     this.available = false;
   }
 
   async init() {
+    const healthPath = this.config?.health_path || '/healthz';
     try {
-      const res = await fetch(`${this.endpoint}/healthz`, { signal: AbortSignal.timeout(3000) });
+      const res = await fetch(`${this.endpoint}${healthPath}`, { signal: AbortSignal.timeout(3000) });
       this.available = res.ok;
       if (this.available) {
         console.log('[intelligence] connected');

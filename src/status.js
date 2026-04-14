@@ -36,13 +36,14 @@ async function checkRecall(config) {
 
 async function checkIntelligence(config) {
   if (!config.engines.intelligence) return { active: false, reason: 'disabled in config' };
+  const healthPath = config.intelligence.health_path || '/healthz';
   try {
-    const res = await fetch(`${config.intelligence.endpoint}/healthz`, {
+    const res = await fetch(`${config.intelligence.endpoint}${healthPath}`, {
       signal: AbortSignal.timeout(3000),
     });
-    return { active: res.ok, reason: res.ok ? null : `healthz returned ${res.status}` };
+    return { active: res.ok, reason: res.ok ? null : `health check returned ${res.status}` };
   } catch {
-    return { active: false, reason: 'not reachable' };
+    return { active: false, reason: 'not reachable — is TI running? npm start in transient-intelligence' };
   }
 }
 

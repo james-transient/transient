@@ -15,7 +15,8 @@
     "tenant": "public"
   },
   "intelligence": {
-    "endpoint": "http://localhost:3001"
+    "endpoint": "http://localhost:8080",
+    "health_path": "/api/health"
   },
   "dashboard": {
     "port": 7474,
