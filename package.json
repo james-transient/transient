@@ -1,0 +1,20 @@
+{
+  "name": "transient",
+  "version": "0.1.0",
+  "description": "The trust layer for autonomous agents",
+  "type": "module",
+  "bin": {
+    "transient": "./bin/transient.js"
+  },
+  "scripts": {
+    "start": "node bin/transient.js start",
+    "status": "node bin/transient.js status"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "commander": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
