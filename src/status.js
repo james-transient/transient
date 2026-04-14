@@ -36,14 +36,22 @@ async function checkRecall(config) {
 
 async function checkIntelligence(config) {
   if (!config.engines.intelligence) return { active: false, reason: 'disabled in config' };
-  const healthPath = config.intelligence.health_path || '/healthz';
+  const apiKey = config.intelligence.api_key || process.env.TRANSIENT_INTELLIGENCE_API_KEY || '';
+  if (!apiKey) {
+    return { active: false, reason: 'no API key — set TRANSIENT_INTELLIGENCE_API_KEY to enable' };
+  }
+  const healthPath = config.intelligence.health_path || '/api/health';
   try {
     const res = await fetch(`${config.intelligence.endpoint}${healthPath}`, {
-      signal: AbortSignal.timeout(3000),
+      headers: { 'x-api-key': apiKey },
+      signal: AbortSignal.timeout(5000),
     });
-    return { active: res.ok, reason: res.ok ? null : `health check returned ${res.status}` };
+    if (res.status === 401 || res.status === 403) {
+      return { active: false, reason: 'API key rejected — check TRANSIENT_INTELLIGENCE_API_KEY' };
+    }
+    return { active: true };
   } catch {
-    return { active: false, reason: 'not reachable — is TI running? npm start in transient-intelligence' };
+    return { active: false, reason: 'not reachable — check network or API key' };
   }
 }
 

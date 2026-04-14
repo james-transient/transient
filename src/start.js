@@ -3,17 +3,48 @@ import { RecallSubscriber } from './subscribers/recall.js';
 import { IntelligenceSubscriber } from './subscribers/intelligence.js';
 import { getStatus, printStatus } from './status.js';
 
-export async function start(config) {
+const ENGINE_DESCRIPTIONS = {
+  trace: {
+    on:  'intercepting agent commands — enforcing policy, writing receipts',
+    off: 'receipt store not found — run your agent first to generate receipts',
+  },
+  recall: {
+    on:  'connected — will load prior context and record blocked actions to memory',
+    off: null, // filled dynamically from status.reason
+  },
+  intelligence: {
+    on:  'connected — git commits and outbound network calls will be verified',
+    off: null, // filled dynamically from status.reason
+  },
+};
+
+function printStartupStatus(status, config) {
   console.log('\nStarting Transient...\n');
 
+  const rows = [
+    { name: 'Trace',         key: 'trace' },
+    { name: 'Recall',        key: 'recall' },
+    { name: 'Intelligence',  key: 'intelligence' },
+  ];
+
+  for (const { name, key } of rows) {
+    const s = status[key];
+    const label = name.padEnd(14);
+    if (s.active) {
+      console.log(`  ✓  ${label}  ${ENGINE_DESCRIPTIONS[key].on}`);
+    } else {
+      const reason = s.reason || ENGINE_DESCRIPTIONS[key].off || 'not available';
+      console.log(`  –  ${label}  ${reason}`);
+    }
+  }
+
+  console.log('');
+}
+
+export async function start(config) {
   // Check what is available
   const status = await getStatus(config);
-  printStatus(status);
-
-  if (!status.trace.active) {
-    console.log('Trace receipt store not found. Run your agent first to generate receipts.');
-    console.log(`Expected location: ${config.trace.receipt_store}\n`);
-  }
+  printStartupStatus(status, config);
 
   // Start receipt bus — the nervous system
   const bus = new ReceiptBus(config.trace.receipt_store);
@@ -50,26 +81,32 @@ export async function start(config) {
   // Log all events to console in a readable format
   bus.on('event', (event) => {
     if (event.type === 'batch') {
-      const { total, allowed, blocked, sessions, content } = event.batch;
+      const { total, allowed, blocked, content, sessions } = event.batch;
       if (total > 0) {
-        console.log(`[trace] ${allowed} allowed  ${blocked} blocked  ${content.length} content  ${sessions.size} sessions`);
+        console.log(`[trace] ${allowed} allowed  ${blocked} blocked  ${content.length} content  ${sessions.size} session(s)`);
       }
     }
     if (event.type === 'blocked') {
       const action = event.receipt?.intent?.action || 'unknown';
       const reason = event.receipt?.decision?.reason_code || '';
-      console.log(`[trace] ✗ BLOCKED  ${action} — ${reason}`);
+      console.log(`[trace] ✗ BLOCKED  ${action}${reason ? ` — ${reason}` : ''}`);
     }
     if (event.type === 'content') {
       console.log(`[trace] ◆ ${event.action}`);
+    }
+    if (event.type === 'learning') {
+      const { rule_id, action_class, tool_name, outcome, confidence, count } = event.receipt;
+      const pct = confidence != null ? ` (${Math.round(confidence * 100)}% confidence, ${count} observations)` : '';
+      console.log(`[learning] ◆ rule promoted → ${outcome} ${tool_name || action_class}${pct}`);
+      console.log(`           rule id: ${rule_id}`);
     }
   });
 
   // Start watching
   bus.start();
 
-  console.log('Transient is running. Watching for agent activity...');
-  console.log('Press Ctrl+C to stop.\n');
+  console.log('Watching for agent activity. Receipts processed every 30s.');
+  console.log('Press Ctrl+C to stop and checkpoint session.\n');
 
   // Keep process alive
   process.stdin.resume();

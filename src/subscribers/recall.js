@@ -2,9 +2,9 @@
  * recall.js — Receipt bus subscriber for Transient Recall
  *
  * Reacts to the receipt stream automatically:
- * - session_start → load context from Recall graph
- * - action → enrich graph with action patterns over time
- * - session end is detected externally via process monitoring
+ * - first batch → load prior context from Recall graph (once per process)
+ * - blocked → checkpoint blocked action to Recall graph for pattern analysis
+ * - session end → checkpoint via SIGINT/SIGTERM handler in start.js
  */
 
 export class RecallSubscriber {
@@ -35,17 +35,19 @@ export class RecallSubscriber {
   onEvent(event) {
     if (!this.available) return;
 
-    // Only load context once per process lifetime, not per session
-    if (event.type === 'session_start' && !this._contextLoaded) {
+    // Load context once per process lifetime on first batch arrival.
+    // receipt-bus never emits session_start — we use first batch instead.
+    if (event.type === 'batch' && !this._contextLoaded) {
       this._contextLoaded = true;
-      this._loadContext(event.sessionId).catch(() => {});
+      const sessionId = event.batch?.sessions
+        ? [...event.batch.sessions][0] || 'unknown'
+        : 'unknown';
+      this._loadContext(sessionId).catch(() => {});
     }
 
-    // Only log blocked actions — no network calls per action
+    // Record blocked actions to Recall graph for pattern analysis
     if (event.type === 'blocked') {
-      const action = event.receipt?.intent?.action || 'unknown';
-      const reason = event.receipt?.decision?.reason_code || '';
-      console.log(`[recall] recording blocked: ${action} — ${reason}`);
+      this._recordBlockedAction(event).catch(() => {});
     }
   }
 
@@ -81,7 +83,18 @@ export class RecallSubscriber {
   async _recordBlockedAction(event) {
     const action = event.receipt?.intent?.action || 'unknown';
     const reason = event.receipt?.decision?.reason_code || 'unknown';
-    console.log(`[recall] recording blocked action: ${action} (${reason})`);
+    const command = event.receipt?.intent?.target?.command || '';
+    console.log(`[recall] recording blocked: ${action} — ${reason}`);
+    await this._callTool('tr_checkpoint', {
+      project: this.project,
+      scope: 'transient-blocked',
+      mode: 'ephemeral',
+      work_packet: {
+        current_goal: `Blocked action: ${action}`,
+        context_capsule: `Action '${action}' was blocked. Reason: ${reason}. Command: ${command}`,
+        summary_brief: `Blocked: ${action} (${reason})`,
+      },
+    });
   }
 
   async _callTool(toolName, args) {
