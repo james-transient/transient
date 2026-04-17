@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-<a href="LICENSE"><img src="https://img.shields.io/badge/license-Elastic%20License%202.0-blue.svg" /></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-proprietary-red.svg" /></a>
 <a href="https://pypi.org/project/transient-trace/"><img src="https://img.shields.io/pypi/v/transient-trace.svg" /></a>
 <a href="https://github.com/james-transient/transient-atp"><img src="https://img.shields.io/badge/protocol-ATP%201.0-green.svg" /></a>
 </p>
@@ -122,9 +122,9 @@ For complete coverage in production environments, pair Transient with a network 
 
 ## Licence
 
-[Elastic License 2.0](LICENSE). © 2026 Transient Intelligence Ltd.
+[Transient Software License Agreement](LICENSE). © 2026 Transient Intelligence Ltd.
 
-You may use, run, and modify this software on your own systems. You may not offer it as a hosted or managed service to third parties.
+Free during alpha for evaluation and feedback. Free alpha access does not constitute a commitment to provide the software free of charge after the alpha phase ends. Commercial licensing will be introduced at general availability.
 
 ---
 
