@@ -10,7 +10,11 @@
 
 ---
 
-## The problem
+```bash
+pip install transient-trace
+```
+
+---
 
 Autonomous agents can now act without a human in the loop: write code, push to production, call APIs, make purchases, move money. The missing piece is not capability. It is accountability.
 
