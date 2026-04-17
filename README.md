@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="media/banner.png" alt="Transient" width="500" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="media/banner-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="media/banner-light.png">
+    <img alt="Transient" src="media/banner-light.png" width="500" />
+  </picture>
 </p>
 
 <p align="center">
