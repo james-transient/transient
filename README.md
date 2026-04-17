@@ -1,6 +1,6 @@
 # Transient
 
-The trust layer for autonomous agents.
+The trust infrastructure layer for autonomous agents.
 
 Built on the [Agent Transaction Protocol (ATP)](https://github.com/james-transient/transient-atp) — the open protocol specification for autonomous agent action governance.
 
@@ -10,7 +10,7 @@ Guardrails are instructions. Instructions live inside the thing you're trying to
 
 Real governance intercepts at the infrastructure layer, before the action lands. The agent doesn't get a vote.
 
-Transient is three components that work together below the agent — not inside it.
+Transient is three components that work together below the agent, not inside it.
 
 ---
 
