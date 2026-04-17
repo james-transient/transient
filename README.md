@@ -1,28 +1,60 @@
 # Transient
 
-Autonomous agents are here. The infrastructure to trust them isn't.
+Without governance, the agentic economy is chaos.
 
-Agents can act without humans in the loop. They can write code, make purchases, call APIs, push to production, move money. What's missing is not capability. It's accountability.
+Agents can act without humans in the loop. They can write code, make purchases, call APIs, push to production, move money. The missing piece is not capability. It is governance: a standardised way to record what an agent was authorised to do, what decision was made, and what happened — in a form that is tamper-evident and independently verifiable.
 
-Without a way to verify what an agent did, why it did it, and whether it was authorised to do it, there is no agentic economy. There is just risk.
+Without that, you cannot audit an agent, hold a system accountable, or safely delegate anything that matters to an autonomous process.
 
-Transient is the trust infrastructure layer for autonomous agents.
-
----
-
-Guardrails are instructions. Instructions live inside the thing you're trying to govern. It's like putting someone in handcuffs and giving them the key.
-
-Transient intercepts at the infrastructure layer, before the action lands. The agent doesn't get a vote, and doesn't need to be asked nicely.
+Transient is that infrastructure.
 
 ---
 
-## What Transient gives you
+## The problem
 
-Every agent action intercepted before execution. Every decision recorded as a tamper-evident receipt. Every pattern remembered across sessions. Every content-producing action verified against declared intent.
+Every agent action today happens without a checkpoint.
 
-Governance, memory, and verification. None of it inside the agent. None of it dependent on the agent behaving. All of it operating below the agent, at the infrastructure layer, where it cannot be bypassed.
+No interception. Agents act without oversight, accessing systems and executing operations with no governance layer between intent and action.
 
-This is what makes agents trustworthy enough to deploy. Trustworthy enough to transact. Trustworthy enough to matter.
+No audit trail. There is no tamper-evident record of what was decided, what was allowed, and what was blocked.
+
+No oversight. There is no human notification at critical boundaries — privilege escalation, production deployments, external network calls.
+
+No recourse. When something goes wrong, there is no receipt, no accountability, no way to reconstruct what happened and why.
+
+This is not a tooling problem. It is an infrastructure problem.
+
+---
+
+## What Transient does
+
+Transient intercepts at the infrastructure layer — not inside your agent, not inside your prompt, below both.
+
+Every agent action passes through a governance checkpoint before it reaches any downstream system. Every decision produces a signed, immutable receipt. Every pattern is remembered across sessions. Every content-producing action is verified against declared intent.
+
+The result: confidence, control, and compliance by design.
+
+Not because the agent is asked to behave. Because the infrastructure enforces it.
+
+---
+
+## How it works
+
+```
+Agent tries to act
+        ↓
+Transient intercepts before execution
+        ↓
+Policy evaluated: allow or deny
+        ↓
+Signed receipt written (tamper-evident, Ed25519)
+        ↓
+Memory indexes the event
+        ↓
+Verification checks content-producing actions against intent
+```
+
+None of this requires changes to agent code. None of it can be bypassed by the agent. The agent does not govern itself. The infrastructure does.
 
 ---
 
@@ -47,9 +79,11 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 
 ## Built on an open protocol
 
-Transient implements [ATP 1.0](https://github.com/james-transient/transient-atp) — the Agent Transaction Protocol. Every governed action produces three canonical objects: `Intent`, `Decision`, `Receipt`. Signed with Ed25519. Independently verifiable by any party.
+Transient implements [ATP 1.0](https://github.com/james-transient/transient-atp) — the Agent Transaction Protocol. The open standard for autonomous agent action governance.
 
-The protocol is open. Anyone can implement it. Transient is the reference implementation.
+Every governed action produces three canonical objects: `Intent` (what the agent declared), `Decision` (allow or deny), `Receipt` (the signed, immutable record). Receipts are independently verifiable by any party with no dependency on the issuing system.
+
+The protocol is open. The standard is open. Anyone can implement it. Transient is the reference implementation.
 
 ---
 
