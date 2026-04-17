@@ -44,7 +44,7 @@ transient-trace run python agent.py
 transient-trace run claude
 ```
 
-Every session must be started this way. If you launch your agent directly, Transient is not active for that session. The shims from step 2 provide always-on coverage for specific binaries, but full session governance requires `transient-trace run`.
+Every session must be started this way. Launching an agent directly without `transient-trace run` means there is no session context, no linked receipt chain, and no popen hook. Permanent shims will still intercept specific binaries but the receipts are unconnected. For full governance, always start through `transient-trace run`.
 
 That's it. Every action the agent takes is now intercepted, evaluated, and receipted.
 

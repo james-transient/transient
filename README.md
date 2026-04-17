@@ -104,6 +104,18 @@ Transient is designed for teams building or deploying autonomous agents who need
 - A tamper-evident audit trail for compliance and accountability
 - Memory and verification that operate from the governance layer, not the application layer
 
+## How Transient runs
+
+Transient wraps your agent process. You launch your agent through `transient-trace run` — that is how the governed session is created, the receipt chain is started, and the popen hook is activated.
+
+```bash
+transient-trace run python agent.py
+transient-trace run claude
+transient-trace --mode strict --packages filesystem,code,privilege,shell run python agent.py
+```
+
+Launching an agent directly without `transient-trace run` means there is no session context and no linked receipt chain. Permanent shims will still intercept specific binaries, but the receipts are unconnected. For full governance, always start through `transient-trace run`.
+
 ## Current limitations
 
 Tested and supported on macOS only. Linux is in development. Windows is not currently supported.
