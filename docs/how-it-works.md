@@ -62,7 +62,7 @@ Allow → real binary executes → signed receipt written (Ed25519)
 Deny  → action blocked       → unsigned deny event written
 ```
 
-Receipts are signed with Ed25519 and cannot be modified after the fact.
+Receipts follow the [Agent Transaction Protocol (ATP 1.0)](https://github.com/james-transient/transient-atp) — the open specification for governed agent actions. Every receipt carries three canonical objects: `Intent` (what the agent declared), `Decision` (allow or deny), and `Receipt` (the signed, tamper-evident record). Receipts are signed with Ed25519 and independently verifiable by any party with no dependency on the issuing system.
 
 ---
 

@@ -2,6 +2,8 @@
 
 The trust layer for autonomous agents.
 
+Built on the [Agent Transaction Protocol (ATP)](https://github.com/james-transient/transient-atp) — the open protocol specification for autonomous agent action governance.
+
 ---
 
 Guardrails are instructions. Instructions live inside the thing you're trying to govern. It's like putting someone in handcuffs and giving them the key.
@@ -91,6 +93,20 @@ transient-trace receipts list --outcome deny
 ```
 
 Recall indexes these receipts at the infrastructure layer — not from agent conversation, not from logs. From the governance layer itself.
+
+---
+
+## Protocol foundation
+
+Transient Trace implements [ATP 1.0](https://github.com/james-transient/transient-atp) — the Agent Transaction Protocol. ATP defines the canonical model for governed agent actions:
+
+| Object | What it represents |
+|--------|-------------------|
+| `Intent` | The declared action the agent wants to perform |
+| `Decision` | The governance outcome: `allow` or `deny` |
+| `Receipt` | The immutable, cryptographically signed record of the action and its outcome |
+
+Every receipt Trace produces follows the ATP specification. Receipts are signed with Ed25519 and independently verifiable — no dependency on the issuing system. ATP is an open protocol. Transient Trace is the reference implementation.
 
 ---
 
