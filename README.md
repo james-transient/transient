@@ -57,11 +57,22 @@ transient-trace wrap install-hook
 Boot your agent through Transient. Every session must be launched via `transient-trace run` this is how the governance layer wraps the process:
 
 ```bash
+transient-trace run claude
 transient-trace --mode strict --packages filesystem,code,privilege,shell run python agent.py
 ```
 
+Transient runs in three modes:
+
+| Mode | Behaviour |
+|------|-----------|
+| `audit` | Records everything. Never blocks. Default. Use this to observe what your agent does before enforcing rules. |
+| `strict` | Blocks on policy violations before the action executes. Use this for production governance. |
+| `permissive` | Logs violations but never blocks. Use this for testing policy rules. |
+
+Set a mode permanently:
+
 ```bash
-transient-trace run claude
+transient-trace config set mode strict
 ```
 
 View the audit trail:
