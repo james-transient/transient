@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="media/logo.svg" alt="Transient" width="80" />
+  <img src="media/banner.png" alt="Transient" width="600" />
 </p>
-
-# Transient
 
 **The trust infrastructure for autonomous agents.**
 
