@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="media/logo.svg" alt="Transient" width="80" />
+</p>
+
 # Transient
 
 **The trust infrastructure for autonomous agents.**
@@ -14,7 +18,7 @@
 pipx install transient-trace
 ```
 
----
+<video src="media/demo.mp4" autoplay loop muted width="100%"></video>
 
 Autonomous agents can now act without a human in the loop: write code, push to production, call APIs, make purchases, move money. The missing piece is not capability. It is accountability.
 
