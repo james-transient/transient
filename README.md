@@ -12,10 +12,6 @@
 <a href="https://github.com/james-transient/transient-atp"><img src="https://img.shields.io/badge/protocol-ATP%201.0-green.svg" /></a>
 </p>
 
-<p align="center">
-<em>Created and maintained by <a href="https://transientintelligence.com">Transient Intelligence Ltd</a></em>
-</p>
-
 ---
 
 ```bash
