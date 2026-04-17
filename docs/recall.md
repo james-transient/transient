@@ -4,46 +4,43 @@ Memory at the infrastructure layer.
 
 ---
 
-## What it is
+## What it does
 
-Transient Recall indexes agent behaviour from Trace receipts — not from conversation history, not from agent logs, not from code instrumentation.
+Every AI agent is stateless by design. Each session starts blind — no memory of what it tried last time, what was blocked, what patterns emerged. Recall fixes this, but not by reading conversation history or agent logs.
 
-When an agent is blocked from pushing to production, that event is recorded in a Trace receipt. Recall reads that receipt and indexes it into a knowledge graph. The next session, Recall already knows what this agent tried, what was stopped, and what patterns have emerged.
+Recall reads Trace receipts directly. The governance record — what the agent did, what was allowed, what was blocked, and why — gets indexed into a knowledge graph. The next session, that history is available. Not from what the agent said about itself. From what the infrastructure recorded.
 
-None of this requires changes to your agent code. Recall operates on the governance record, not on the agent itself.
+---
+
+## Why this matters
+
+An agent can tell you anything. The governance layer cannot lie.
+
+When an agent is blocked from pushing to production, Recall indexes that event from the receipt — not from the agent's self-report. When the same pattern recurs across sessions, Recall knows. When a new session starts, Recall loads that history and the agent begins with full context of what governance has seen.
+
+This is infrastructure-level memory. It cannot be manipulated by the agent, because the agent never touches it.
 
 ---
 
 ## How it connects to Trace
 
-Recall receives events from the Transient receipt bus. The bus polls the Trace receipt store every 30 seconds and dispatches batches to Recall:
+The Transient receipt bus polls the Trace receipt store every 30 seconds and dispatches events to Recall:
 
 - **Session start** — Recall loads prior context from the knowledge graph
-- **Blocked action** — Recall records the block, action type, and reason
+- **Blocked action** — Recall records the action, reason, and pattern
 - **Session end** — Recall checkpoints the session summary
 
 ```
-Trace receipt → receipt bus → Recall subscriber → knowledge graph
+Agent action
+    ↓
+Trace intercepts → writes receipt
+    ↓
+Receipt bus picks it up
+    ↓
+Recall indexes it (from governance layer, not from agent)
 ```
 
----
-
-## What gets indexed
-
-Recall indexes at the governance layer:
-
-- What actions were attempted
-- What was blocked and why
-- What patterns recur across sessions
-- What the agent was trying to do when governance intervened
-
-This is fundamentally different from application-level memory. Recall doesn't know what the agent said — it knows what the agent did and what the infrastructure stopped.
-
----
-
-## Configuration
-
-In `transient.config.json`:
+Configure in `transient.config.json`:
 
 ```json
 {
@@ -55,16 +52,20 @@ In `transient.config.json`:
 }
 ```
 
-Start the receipt bus to connect Recall to Trace automatically:
-
-```bash
-npm start
-```
+Then `npm start` — Recall connects automatically.
 
 ---
 
-## Coming soon
+## What gets remembered
 
-Transient Recall is in active development. Public documentation and SDK will be available at launch.
+- What actions each agent attempted
+- What was blocked and under which policy rule
+- Patterns that recur across sessions
+- Session context and goals at the point governance intervened
+- The full arc of what an agent did over time
 
-Stay tuned for agents you can trust.
+None of this comes from the agent. All of it comes from Trace.
+
+---
+
+Transient Recall is part of the Transient suite. It is not available as a standalone product.
