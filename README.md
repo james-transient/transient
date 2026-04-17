@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-<a href="#"><img src="https://img.shields.io/badge/license-proprietary-red.svg" /></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-proprietary-red.svg" /></a>
 <a href="https://pypi.org/project/transient-trace/"><img src="https://img.shields.io/pypi/v/transient-trace.svg" /></a>
 <a href="https://github.com/james-transient/transient-atp"><img src="https://img.shields.io/badge/protocol-ATP%201.0-green.svg" /></a>
 </p>
@@ -122,7 +122,9 @@ For complete coverage in production environments, pair Transient with a network 
 
 ## Licence
 
-Proprietary. All rights reserved. © 2026 Transient Intelligence Ltd.
+[Transient Software License Agreement](LICENSE). © 2026 Transient Intelligence Ltd.
+
+Free during alpha for evaluation and feedback. Free alpha access does not constitute a commitment to provide the software free of charge after the alpha phase ends. Commercial licensing will be introduced at general availability.
 
 ---
 
