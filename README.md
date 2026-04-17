@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="media/logo.svg" alt="Transient" width="400" />
+  <img src="media/banner.png" alt="Transient" width="500" />
 </p>
 
 <p align="center">
