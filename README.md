@@ -94,11 +94,23 @@ Recall indexes these receipts at the infrastructure layer — not from agent con
 
 ---
 
+## Current limitations
+
+Transient Trace is tested and supported on **macOS only**. Linux is in development. Windows is not currently supported.
+
+Coverage is strongest for terminal-based agents. Agents that run through IDE extensions, browser-based interfaces, or GUI tools may not have full subprocess interception. Native Python network calls (urllib, requests, httpx) are not intercepted at the socket level — only subprocess calls are covered.
+
+This is early software. For production use, pair Transient with additional controls: network proxy, container isolation, OS-level firewall.
+
+Full details: [How it works — limitations](docs/how-it-works.md#whats-not-covered)
+
+---
+
 ## Docs
 
 - [Quickstart](docs/quickstart.md)
 - [How it works](docs/how-it-works.md)
-- [Transient Trace](docs/trace.md)
+- [Transient Trace](docs/trace.md) — governance, OWASP packages, uninstall
 - [Transient Recall](docs/recall.md)
 - [CLI Reference](docs/cli-reference.md)
 - [Troubleshooting](docs/troubleshooting.md)

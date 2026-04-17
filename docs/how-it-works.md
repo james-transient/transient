@@ -124,8 +124,24 @@ These values are locked at Client initialisation time. The agent cannot override
 
 | Path | Why |
 |---|---|
-| Native network calls (urllib, requests, httpx) | No socket-level hook |
+| Native Python network calls (urllib, requests, httpx) | No socket-level hook — only subprocess calls |
 | Node.js `child_process` with absolute paths | Popen hook is Python-only |
+| GUI applications and IDE extensions | Non-terminal agent interfaces bypass PATH shims |
+| Browser automation and headless browsers | Not intercepted |
+| Agents running as root | Shim dir may not be in root's PATH |
 | Binaries not in the shim set | Only shimmed binaries are intercepted |
 
-For complete network coverage, pair Transient with a network proxy or eBPF-based egress filter at the OS level.
+If your agent runs through a non-terminal interface — an IDE plugin, browser-based tool, or custom GUI — subprocess calls may not route through the PATH shim. The Popen hook covers Python absolute-path calls but there is no equivalent for other runtimes.
+
+For complete coverage, pair Transient with a network proxy or eBPF-based egress filter at the OS level.
+
+---
+
+## Current platform support
+
+Transient is currently **tested and supported on macOS** (Apple Silicon and Intel).
+
+- **Linux** — in development, not yet tested
+- **Windows** — not currently supported
+
+This is early software. Use additional controls for production environments — network proxy, container isolation, OS-level firewall — to cover the gaps above.

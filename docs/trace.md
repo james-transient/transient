@@ -213,3 +213,75 @@ transient-trace receipts learning
 ```
 
 Useful for generating a tailored policy from observed behaviour rather than writing rules from scratch.
+
+---
+
+## Uninstall
+
+### Clean uninstall (keeps config and receipts)
+
+```bash
+transient-trace uninstall
+```
+
+Removes all shims, the Popen hook, and the PATH entry from shell RC files. Your receipts and config are preserved.
+
+### Full purge (removes everything)
+
+```bash
+transient-trace uninstall --purge-data
+```
+
+Also removes `~/.config/transient-trace/` and `~/transient-audit/`.
+
+### If uninstall is blocked by immutability
+
+If you used `--lock` when installing shims, unlock first:
+
+```bash
+chflags -R nouchg ~/.config/transient-trace ~/.transient-trace 2>/dev/null; true
+transient-trace uninstall --purge-data
+```
+
+### Manual cleanup (if CLI is unavailable)
+
+```bash
+# Remove shims
+rm -rf ~/.transient-trace/shims
+
+# Remove Popen hook
+find ~/Library/Python -name "transient_trace_hook.pth" -delete 2>/dev/null; true
+
+# Remove PATH entry from shell RC
+# Edit ~/.zshrc and ~/.zshenv manually to remove the transient-trace shims line
+
+# Remove pipx package
+pipx uninstall transient-trace
+
+# Remove config and receipts (optional)
+rm -rf ~/.config/transient-trace ~/transient-audit
+```
+
+---
+
+## Current limitations
+
+**Platform support**
+
+Transient Trace is currently tested and supported on **macOS (Apple Silicon and Intel)**. Linux support is in development. Windows is not currently supported.
+
+**Coverage gaps**
+
+| Path | Status |
+|------|--------|
+| Terminal subprocess calls (PATH-resolved) | ✓ Covered by shims |
+| Python subprocess with absolute path | ✓ Covered by Popen hook |
+| Native Python network calls (urllib, requests, httpx) | ✗ Not intercepted |
+| Node.js `child_process` with absolute paths | ✗ Not intercepted |
+| GUI applications and non-terminal agent interfaces | ✗ Not intercepted |
+| Agents that invoke binaries via IDE extensions or browser automation | ✗ Not intercepted |
+| Actions taken by processes running as root | ✗ Shim dir may not be in root's PATH |
+
+If your agent runs through a non-terminal interface — an IDE extension, a browser-based tool, a custom GUI — subprocess calls may bypass the PATH shim layer entirely. The Popen hook will still catch Python subprocess calls with absolute paths, but there is no coverage for other runtimes.
+
+**This is early software.** The governance layer is functional and tested on macOS, but production use should include additional controls (network proxy, OS-level firewall, container isolation) for complete coverage.
