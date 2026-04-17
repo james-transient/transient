@@ -29,7 +29,7 @@ macOS creates `._*` resource fork files on exFAT/FAT32 external drives. These co
 Fix — install directly from PyPI instead:
 
 ```bash
-pip install transient-trace
+pipx install transient-trace
 ```
 
 Or if building from source, strip the resource forks first:
@@ -141,7 +141,7 @@ transient-trace uninstall --purge-data
 pipx uninstall transient-trace
 
 # 4. Reinstall
-pip install transient-trace
+pipx install transient-trace
 
 # 5. Reinstall shims and hook
 transient-trace wrap install git curl npm pip3 uv --auto-rc

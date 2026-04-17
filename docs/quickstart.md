@@ -7,14 +7,10 @@ Get your agent governed in under five minutes.
 ## 1. Install Transient Trace
 
 ```bash
-pip install transient-trace
-```
-
-Or with pipx (recommended — isolated environment, binary on PATH permanently):
-
-```bash
 pipx install transient-trace
 ```
+
+`pipx` installs into an isolated environment and puts `transient-trace` on PATH permanently. If you don't have pipx: `brew install pipx && pipx ensurepath`.
 
 ---
 
