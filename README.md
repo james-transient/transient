@@ -24,11 +24,11 @@ Autonomous agents can now act without a human in the loop: write code, push to p
 
 Without a governance layer, there is no audit trail, no interception, no recourse. You cannot deploy agents at scale without knowing what they did, what they were authorised to do, and why. Guardrails inside the agent are not governance. They are instructions and instructions live inside the thing you are trying to govern.
 
-Transient is the first governance layer that operates outside the agent process. No code changes required. The agent cannot disable it, route around it, or see past it.
+Transient is a governance layer that operates outside the agent process. No sandbox. No framework coupling. The agent cannot disable it, route around it, or see past it.
 
 ## What Transient does
 
-Transient intercepts at the infrastructure layer outside the agent process, below the application layer and produces tamper-evident receipts for every governed action.
+Transient intercepts at the process boundary, outside the agent and below the framework. Every governed action produces a tamper-evident receipt before it reaches the system. Receipts are signed with Ed25519 and independently verifiable by any party with no dependency on the issuing system.
 
 | Capability | What it provides |
 |------------|-----------------|
@@ -40,6 +40,8 @@ Transient intercepts at the infrastructure layer outside the agent process, belo
 None of this requires changes to agent code. None of it can be bypassed by the agent.
 
 ## Getting started
+
+Transient is the product. `transient-trace` is the CLI that powers the governance layer. Install it with:
 
 ```bash
 pipx install transient-trace
