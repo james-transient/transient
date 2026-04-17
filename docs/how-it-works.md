@@ -1,6 +1,6 @@
 # How It Works
 
-Transient operates at the infrastructure layer — below your agent code, below your prompts, below your guardrails. This page explains the architecture and how the three engines connect.
+Transient operates at the infrastructure layer below your agent code, below your prompts, below your guardrails. This page explains the architecture and how the three engines connect.
 
 ---
 
@@ -10,7 +10,7 @@ Guardrails are instructions. Instructions live inside the thing you're trying to
 
 An agent with a system prompt saying "don't push to production" can still push to production. The instruction and the agent that might ignore it are in the same process. It's like putting someone in handcuffs and giving them the key.
 
-Real governance intercepts before the action executes — at the infrastructure layer, where the agent has no vote.
+Real governance intercepts before the action executes at the infrastructure layer, where the agent has no vote.
 
 ---
 
@@ -37,17 +37,17 @@ Real governance intercepts before the action executes — at the infrastructure 
 └─────────────────────┘  └────────────────────────────────┘
 ```
 
-None of this requires changes to your agent code. Everything operates on receipts — not on the agent's conversation or internal state.
+None of this requires changes to your agent code. Everything operates on receipts not on the agent's conversation or internal state.
 
 ---
 
-## Transient Trace — governance at the OS layer
+## Transient Trace governance at the OS layer
 
 Trace intercepts actions at two levels:
 
-**PATH shims** — thin scripts written to `~/.transient-trace/shims/`. When an agent calls `git push`, the shell resolves `git` to the shim first. The shim evaluates the action against policy before the real binary ever runs.
+**PATH shims** thin scripts written to `~/.transient-trace/shims/`. When an agent calls `git push`, the shell resolves `git` to the shim first. The shim evaluates the action against policy before the real binary ever runs.
 
-**Popen hook** — a Python monkey-patch on `subprocess.Popen` that catches absolute-path subprocess calls (`/usr/bin/git`), which bypass PATH entirely. Installed via a `.pth` file in Python's site-packages.
+**Popen hook** a Python monkey-patch on `subprocess.Popen` that catches absolute-path subprocess calls (`/usr/bin/git`), which bypass PATH entirely. Installed via a `.pth` file in Python's site-packages.
 
 Every intercepted action goes through the same pipeline:
 
@@ -62,21 +62,21 @@ Allow → real binary executes → signed receipt written (Ed25519)
 Deny  → action blocked       → unsigned deny event written
 ```
 
-Receipts follow the [Agent Transaction Protocol (ATP 1.0)](https://github.com/james-transient/transient-atp) — the open specification for governed agent actions. Every receipt carries three canonical objects: `Intent` (what the agent declared), `Decision` (allow or deny), and `Receipt` (the signed, tamper-evident record). Receipts are signed with Ed25519 and independently verifiable by any party with no dependency on the issuing system.
+Receipts follow the [Agent Transaction Protocol (ATP 1.0)](https://github.com/james-transient/transient-atp) the open specification for governed agent actions. Every receipt carries three canonical objects: `Intent` (what the agent declared), `Decision` (allow or deny), and `Receipt` (the signed, tamper-evident record). Receipts are signed with Ed25519 and independently verifiable by any party with no dependency on the issuing system.
 
 ---
 
-## Transient Recall — memory at the infrastructure layer
+## Transient Recall memory at the infrastructure layer
 
-Recall doesn't read agent conversation history. It doesn't instrument your code. It reads Trace receipts directly — the governance record of what your agent actually did versus what it was allowed to do.
+Recall doesn't read agent conversation history. It doesn't instrument your code. It reads Trace receipts directly the governance record of what your agent actually did versus what it was allowed to do.
 
-Blocked actions, behaviour patterns, and session context are indexed into a knowledge graph. Infrastructure-level memory: what the agent tried, what was stopped, what patterns emerged — independent of what the agent reported about itself.
+Blocked actions, behaviour patterns, and session context are indexed into a knowledge graph. Infrastructure-level memory: what the agent tried, what was stopped, what patterns emerged independent of what the agent reported about itself.
 
 ---
 
-## Transient Intelligence — verification at the infrastructure layer
+## Transient Intelligence verification at the infrastructure layer
 
-Intelligence listens passively to the Trace receipt stream. When a content-producing action executes — a git commit, a network request, a file write — Intelligence verifies it against the agent's declared intent.
+Intelligence listens passively to the Trace receipt stream. When a content-producing action executes a git commit, a network request, a file write Intelligence verifies it against the agent's declared intent.
 
 The agent does not call Intelligence. Intelligence watches the governance layer and triggers automatically. Results surface in the dashboard, not in the agent's flow.
 
@@ -108,7 +108,7 @@ export TRANSIENT_TRACE_POLICY_JSON='{"version":1,"defaultAction":"deny","rules":
 transient-trace run python agent.py
 ```
 
-These values are locked at Client initialisation time. The agent cannot override `MODE` or `POLICY_JSON` after the process starts — even if it writes to the environment.
+These values are locked at Client initialisation time. The agent cannot override `MODE` or `POLICY_JSON` after the process starts even if it writes to the environment.
 
 ---
 
@@ -124,14 +124,14 @@ These values are locked at Client initialisation time. The agent cannot override
 
 | Path | Why |
 |---|---|
-| Native Python network calls (urllib, requests, httpx) | No socket-level hook — only subprocess calls |
+| Native Python network calls (urllib, requests, httpx) | No socket-level hook only subprocess calls |
 | Node.js `child_process` with absolute paths | Popen hook is Python-only |
 | GUI applications and IDE extensions | Non-terminal agent interfaces bypass PATH shims |
 | Browser automation and headless browsers | Not intercepted |
 | Agents running as root | Shim dir may not be in root's PATH |
 | Binaries not in the shim set | Only shimmed binaries are intercepted |
 
-If your agent runs through a non-terminal interface — an IDE plugin, browser-based tool, or custom GUI — subprocess calls may not route through the PATH shim. The Popen hook covers Python absolute-path calls but there is no equivalent for other runtimes.
+If your agent runs through a non-terminal interface an IDE plugin, browser-based tool, or custom GUI subprocess calls may not route through the PATH shim. The Popen hook covers Python absolute-path calls but there is no equivalent for other runtimes.
 
 For complete coverage, pair Transient with a network proxy or eBPF-based egress filter at the OS level.
 
@@ -141,7 +141,7 @@ For complete coverage, pair Transient with a network proxy or eBPF-based egress 
 
 Transient is currently **tested and supported on macOS** (Apple Silicon and Intel).
 
-- **Linux** — in development, not yet tested
-- **Windows** — not currently supported
+- **Linux** in development, not yet tested
+- **Windows** not currently supported
 
-This is early software. Use additional controls for production environments — network proxy, container isolation, OS-level firewall — to cover the gaps above.
+This is early software. Use additional controls for production environments network proxy, container isolation, OS-level firewall to cover the gaps above.

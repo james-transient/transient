@@ -10,14 +10,14 @@ transient-trace [--mode MODE] [--state-dir DIR] [--policy JSON] [--packages LIST
 |------|---------|-------------|
 | `--mode` | `audit` | Governance mode: `strict`, `audit`, or `permissive` |
 | `--state-dir` | `~/transient-audit` | Where receipts and the engine DB are stored |
-| `--policy` | — | Inline JSON governance policy |
-| `--packages` | — | Comma-separated governance package names |
+| `--policy` | | Inline JSON governance policy |
+| `--packages` | | Comma-separated governance package names |
 
 Set permanently with `transient-trace config set`.
 
 ---
 
-## `wrap` — persistent governance shims
+## `wrap` persistent governance shims
 
 ### `wrap install <binary>`
 
@@ -56,7 +56,7 @@ Installs a `.pth` hook into Python's site-packages so `subprocess.Popen` calls w
 
 ---
 
-## `run` — governed session
+## `run` governed session
 
 ```bash
 transient-trace run python agent.py
@@ -73,7 +73,7 @@ transient-trace run --shim mybin:/usr/bin/mybin python agent.py
 
 ---
 
-## `receipts` — browse the audit trail
+## `receipts` browse the audit trail
 
 ### `receipts list`
 
@@ -124,7 +124,7 @@ Backfills the engine DB from JSON receipt files.
 
 ---
 
-## `config` — persistent defaults
+## `config` persistent defaults
 
 ```bash
 transient-trace config show
@@ -142,7 +142,7 @@ transient-trace config set packages filesystem,code,privilege,shell
 
 ---
 
-## `explain` — audit report
+## `explain` audit report
 
 ```bash
 transient-trace explain
@@ -151,7 +151,7 @@ transient-trace explain --action-class network
 
 ---
 
-## `export` — tamper-evident bundle
+## `export` tamper-evident bundle
 
 ```bash
 transient-trace export
@@ -175,13 +175,13 @@ Removes all shims, PATH entries, and the Popen hook. `--purge-data` also removes
 
 | Variable | Description |
 |----------|-------------|
-| `TRANSIENT_TRACE_MODE` | Governance mode — overrides config |
+| `TRANSIENT_TRACE_MODE` | Governance mode overrides config |
 | `TRANSIENT_TRACE_POLICY_JSON` | Inline policy JSON |
 | `TRANSIENT_TRACE_STATE_DIR` | State dir |
-| `TRANSIENT_TRACE_RUN_ID` | Set by `run` — unique session ID |
+| `TRANSIENT_TRACE_RUN_ID` | Set by `run` unique session ID |
 | `TRANSIENT_TRACE_PARENT_RUN_ID` | Set when a governed process runs another governed process |
 | `TRANSIENT_TRACE_LEARNING` | `1` to enable self-learning |
 | `TRANSIENT_TRACE_PACKAGES` | Comma-separated package names |
 | `TRANSIENT_TRACE_HOOK` | `1` to activate the Popen `.pth` hook |
 
-`MODE` and `POLICY_JSON` are locked at Client initialisation — an agent cannot override them after the process starts.
+`MODE` and `POLICY_JSON` are locked at Client initialisation an agent cannot override them after the process starts.

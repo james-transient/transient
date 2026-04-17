@@ -22,7 +22,7 @@ transient-trace --mode strict run python agent.py
 transient-trace config set mode strict
 ```
 
-In audit mode, receipts record what *would* have fired in strict mode — useful for understanding an agent's behaviour before enforcing rules.
+In audit mode, receipts record what *would* have fired in strict mode useful for understanding an agent's behaviour before enforcing rules.
 
 ---
 
@@ -34,7 +34,7 @@ Packages are curated rule sets aligned to the OWASP Agentic Security Initiative 
 transient-trace --mode strict --packages filesystem,code,privilege,shell run python agent.py
 ```
 
-### `filesystem` — ASI-02
+### `filesystem` ASI-02
 
 | Rule | Triggers when |
 |------|---------------|
@@ -42,7 +42,7 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 | Deny | Delete target outside working directory |
 | Challenge | Path contains `~/.ssh`, `~/.aws`, `/etc`, `/usr`, `/bin` |
 
-### `code` — ASI-04
+### `code` ASI-04
 
 | Rule | Triggers when |
 |------|---------------|
@@ -50,7 +50,7 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 | Deny | `pip install`, `npm install` without a lockfile flag |
 | Challenge | Executing an unrecognised binary |
 
-### `privilege` — ASI-03
+### `privilege` ASI-03
 
 | Rule | Triggers when |
 |------|---------------|
@@ -60,7 +60,7 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 | Deny | `chown root` or `chown 0` |
 | Deny | `useradd`, `userdel`, `usermod`, `passwd` |
 
-### `shell` — ASI-04
+### `shell` ASI-04
 
 | Rule | Triggers when |
 |------|---------------|
@@ -69,14 +69,14 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 | Challenge | `bash -c "..."`, `sh -c "..."` |
 | Challenge | `python -c "..."`, `node -e "..."` |
 
-### `web` — ASI-02
+### `web` ASI-02
 
 | Rule | Triggers when |
 |------|---------------|
 | Deny | URL targets `169.254.*`, `10.*`, `192.168.*`, `localhost` (SSRF) |
 | Challenge | POST/PUT/PATCH/DELETE to any host |
 
-### `messaging` — ASI-05
+### `messaging` ASI-05
 
 | Rule | Triggers when |
 |------|---------------|
@@ -161,7 +161,7 @@ EOF
 
 ## Receipts
 
-Every governed action produces a receipt — a tamper-evident JSON record signed with Ed25519:
+Every governed action produces a tamper-evident JSON receipt signed with Ed25519:
 
 ```bash
 transient-trace receipts summary
@@ -171,7 +171,7 @@ transient-trace receipts list --outcome deny
 transient-trace receipts show <receipt-id>
 ```
 
-Receipts are stored as individual JSON files in `~/transient-audit/receipts/`. The signature covers the full receipt payload — any modification breaks verification.
+Receipts are stored as individual JSON files in `~/transient-audit/receipts/`. The signature covers the full receipt payload. Any modification breaks verification.
 
 ```bash
 # Export a tamper-evident bundle
@@ -182,7 +182,7 @@ transient-trace export --out ./audit-bundle.json
 
 ## Persistent shims
 
-Install shims once so governance is always active — no manual prefix needed:
+Install shims once so governance is always active. No manual prefix needed:
 
 ```bash
 transient-trace wrap install git curl npm pip3 uv --auto-rc
@@ -282,6 +282,6 @@ Transient Trace is currently tested and supported on **macOS (Apple Silicon and 
 | Agents that invoke binaries via IDE extensions or browser automation | ✗ Not intercepted |
 | Actions taken by processes running as root | ✗ Shim dir may not be in root's PATH |
 
-If your agent runs through a non-terminal interface — an IDE extension, a browser-based tool, a custom GUI — subprocess calls may bypass the PATH shim layer entirely. The Popen hook will still catch Python subprocess calls with absolute paths, but there is no coverage for other runtimes.
+If your agent runs through a non-terminal interface an IDE extension, a browser-based tool, a custom GUI subprocess calls may bypass the PATH shim layer entirely. The Popen hook will still catch Python subprocess calls with absolute paths, but there is no coverage for other runtimes.
 
 **This is early software.** The governance layer is functional and tested on macOS, but production use should include additional controls (network proxy, OS-level firewall, container isolation) for complete coverage.

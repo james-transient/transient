@@ -16,7 +16,7 @@ pipx install transient-trace
 
 ## 2. Set up governance shims
 
-Shims intercept binaries at the OS level. Every call to `git`, `curl`, `npm` etc. — from any agent, script, or tool on the machine — goes through governance first.
+Shims intercept binaries at the OS level. Every call to `git`, `curl`, `npm` etc. from any agent, script, or tool on the machine goes through governance first.
 
 ```bash
 transient-trace wrap install git curl npm pip3 uv --auto-rc
@@ -34,7 +34,7 @@ which git   # should return ~/.transient-trace/shims/git
 
 ## 3. Boot your agent through Transient
 
-Transient requires you to launch your agent through it. You do not run your agent directly — you run it via `transient-trace run`. This is how the governance layer wraps the process.
+Transient requires you to launch your agent through it. You do not run your agent directly you run it via `transient-trace run`. This is how the governance layer wraps the process.
 
 ```bash
 transient-trace run python agent.py
@@ -108,13 +108,13 @@ npm install
 npm start
 ```
 
-The receipt bus polls Trace receipts every 30 seconds and dispatches events to Recall and Intelligence — no agent code changes required.
+The receipt bus polls Trace receipts every 30 seconds and dispatches events to Recall and Intelligence no agent code changes required.
 
 ---
 
 ## Next steps
 
-- [How it works](how-it-works.md) — architecture, interception model, trust boundary
-- [Transient Trace](trace.md) — policies, packages, receipts, CLI reference
-- [Transient Recall](recall.md) — infrastructure-level memory
-- [Troubleshooting](troubleshooting.md) — common issues and fixes
+- [How it works](how-it-works.md) architecture, interception model, trust boundary
+- [Transient Trace](trace.md) policies, packages, receipts, CLI reference
+- [Transient Recall](recall.md) infrastructure-level memory
+- [Troubleshooting](troubleshooting.md) common issues and fixes

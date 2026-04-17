@@ -18,17 +18,17 @@ pipx install transient-trace
 
 Autonomous agents can now act without a human in the loop: write code, push to production, call APIs, make purchases, move money. The missing piece is not capability. It is accountability.
 
-Without a governance layer, there is no audit trail, no interception, no recourse. You cannot deploy agents at scale without knowing what they did, what they were authorised to do, and why. Guardrails inside the agent are not governance. They are instructions — and instructions live inside the thing you are trying to govern.
+Without a governance layer, there is no audit trail, no interception, no recourse. You cannot deploy agents at scale without knowing what they did, what they were authorised to do, and why. Guardrails inside the agent are not governance. They are instructions and instructions live inside the thing you are trying to govern.
 
 ## What Transient does
 
-Transient intercepts at the infrastructure layer — outside the agent process, below the application layer — and produces tamper-evident receipts for every governed action.
+Transient intercepts at the infrastructure layer outside the agent process, below the application layer and produces tamper-evident receipts for every governed action.
 
 | Capability | What it provides |
 |------------|-----------------|
 | **Governance** | Every subprocess call intercepted before execution. Policy evaluated. Action allowed or denied. |
 | **Receipts** | Every decision recorded as an immutable, Ed25519-signed receipt. Independently verifiable. |
-| **Memory** | Blocked actions, patterns, and session context indexed from the governance layer — not from agent logs. |
+| **Memory** | Blocked actions, patterns, and session context indexed from the governance layer not from agent logs. |
 | **Verification** | Content-producing actions verified against declared intent. Asynchronous. Non-blocking. |
 
 None of this requires changes to agent code. None of it can be bypassed by the agent.
@@ -46,7 +46,7 @@ transient-trace wrap install git curl npm pip3 uv --auto-rc
 transient-trace wrap install-hook
 ```
 
-Boot your agent through Transient. Every session must be launched via `transient-trace run` — this is how the governance layer wraps the process:
+Boot your agent through Transient. Every session must be launched via `transient-trace run` this is how the governance layer wraps the process:
 
 ```bash
 transient-trace --mode strict --packages filesystem,code,privilege,shell run python agent.py
@@ -78,7 +78,7 @@ Transient ships curated rule sets aligned to the OWASP Agentic Security Initiati
 
 ## Protocol foundation
 
-Transient implements [ATP 1.0](https://github.com/james-transient/transient-atp) — the open protocol specification for autonomous agent action governance. Every governed action produces three canonical objects:
+Transient implements [ATP 1.0](https://github.com/james-transient/transient-atp) the open protocol specification for autonomous agent action governance. Every governed action produces three canonical objects:
 
 | Object | What it represents |
 |--------|-------------------|

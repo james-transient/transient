@@ -6,9 +6,9 @@ Memory at the infrastructure layer.
 
 ## What it does
 
-Every AI agent is stateless by design. Each session starts blind — no memory of what it tried last time, what was blocked, what patterns emerged. Recall fixes this, but not by reading conversation history or agent logs.
+Every AI agent is stateless by design. Each session starts blind no memory of what it tried last time, what was blocked, what patterns emerged. Recall fixes this, but not by reading conversation history or agent logs.
 
-Recall reads Trace receipts directly. The governance record — what the agent did, what was allowed, what was blocked, and why — gets indexed into a knowledge graph. The next session, that history is available. Not from what the agent said about itself. From what the infrastructure recorded.
+Recall reads Trace receipts directly. The governance record what the agent did, what was allowed, what was blocked, and why gets indexed into a knowledge graph. The next session, that history is available. Not from what the agent said about itself. From what the infrastructure recorded.
 
 ---
 
@@ -16,7 +16,7 @@ Recall reads Trace receipts directly. The governance record — what the agent d
 
 An agent can tell you anything. The governance layer cannot lie.
 
-When an agent is blocked from pushing to production, Recall indexes that event from the receipt — not from the agent's self-report. When the same pattern recurs across sessions, Recall knows. When a new session starts, Recall loads that history and the agent begins with full context of what governance has seen.
+When an agent is blocked from pushing to production, Recall indexes that event from the receipt not from the agent's self-report. When the same pattern recurs across sessions, Recall knows. When a new session starts, Recall loads that history and the agent begins with full context of what governance has seen.
 
 This is infrastructure-level memory. It cannot be manipulated by the agent, because the agent never touches it.
 
@@ -26,9 +26,9 @@ This is infrastructure-level memory. It cannot be manipulated by the agent, beca
 
 The Transient receipt bus polls the Trace receipt store every 30 seconds and dispatches events to Recall:
 
-- **Session start** — Recall loads prior context from the knowledge graph
-- **Blocked action** — Recall records the action, reason, and pattern
-- **Session end** — Recall checkpoints the session summary
+- **Session start** Recall loads prior context from the knowledge graph
+- **Blocked action** Recall records the action, reason, and pattern
+- **Session end** Recall checkpoints the session summary
 
 ```
 Agent action
@@ -52,7 +52,7 @@ Configure in `transient.config.json`:
 }
 ```
 
-Then `npm start` — Recall connects automatically.
+Then `npm start` Recall connects automatically.
 
 ---
 

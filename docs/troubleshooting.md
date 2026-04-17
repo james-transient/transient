@@ -26,7 +26,7 @@ pipx ensurepath
 
 macOS creates `._*` resource fork files on exFAT/FAT32 external drives. These confuse pip during wheel building.
 
-Fix — install directly from PyPI instead:
+Fix install directly from PyPI instead:
 
 ```bash
 pipx install transient-trace
@@ -45,7 +45,7 @@ pipx install /tmp/tt-src
 
 The shim was installed with a Python interpreter path that no longer exists (e.g. after reinstalling transient-trace under a different package name).
 
-Fix — reinstall the shims:
+Fix reinstall the shims:
 
 ```bash
 transient-trace wrap install git curl npm pip3 uv
@@ -77,7 +77,7 @@ transient-trace --mode audit run python agent.py
 
 ---
 
-### `BLOCKED: git — Denied: policy_default`
+### `BLOCKED: git Denied: policy_default`
 
 The policy's `defaultAction` is `deny` and no rule is allowing this action. Either add an allow rule for the action or switch to audit mode to understand what's being blocked before writing rules.
 
@@ -108,9 +108,9 @@ echo 'export PATH="$HOME/.transient-trace/shims:$HOME/.local/bin:$PATH"' >> ~/.z
 
 ## Receipt bus
 
-### `[recall] not reachable — skipping`
+### `[recall] not reachable skipping`
 
-Recall isn't running or the endpoint in `transient.config.json` is wrong. The bus continues without Recall — Trace governance is unaffected.
+Recall isn't running or the endpoint in `transient.config.json` is wrong. The bus continues without Recall. Trace governance is unaffected.
 
 Check your Recall endpoint:
 
@@ -120,9 +120,9 @@ curl http://localhost:8090/healthz
 
 ---
 
-### `[intelligence] not available — skipping`
+### `[intelligence] not available skipping`
 
-Intelligence server isn't reachable. Same as above — Trace governance continues unaffected. Check your Intelligence endpoint configuration in `transient.config.json`.
+Intelligence server isn't reachable. Same as above. Trace governance continues unaffected. Check your Intelligence endpoint configuration in `transient.config.json`.
 
 ---
 
