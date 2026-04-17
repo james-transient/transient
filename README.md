@@ -18,9 +18,9 @@ Transient is three components that work together below the agent, not inside it.
 
 **[Transient Trace](https://pypi.org/project/transient-trace/)** — Governance at the OS layer. Intercepts every subprocess call before execution. Evaluates against policy. Writes tamper-evident receipts. The agent cannot bypass it, modify it, or see past it.
 
-**Transient Recall** — Memory at the infrastructure layer. Reads Trace receipts directly — not agent logs, not conversation history. Indexes blocked actions, patterns, and session context into a knowledge graph. No agent code required.
+**[Transient Recall](docs/recall.md)** — Memory at the infrastructure layer. Reads Trace receipts directly — not agent logs, not conversation history. Indexes blocked actions, patterns, and session context into a knowledge graph. No agent code required.
 
-**Transient Intelligence** — Verification at the infrastructure layer. Listens passively to Trace receipts. Triggers on content-producing actions — git commits, network requests, file writes. Verifies against declared intent. Never interrupts the agent's flow.
+**[Transient Intelligence](docs/intelligence.md)** — Verification at the infrastructure layer. Listens passively to Trace receipts. Triggers on content-producing actions — git commits, network requests, file writes. Verifies against declared intent. Never interrupts the agent's flow.
 
 ---
 
