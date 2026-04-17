@@ -91,6 +91,12 @@ Transient ships curated rule sets aligned to the [OWASP Top 10 for Agentic Appli
 | `web` | SSRF, mutation requests to internal hosts |
 | `messaging` | External broadcast, unknown recipients |
 
+OWASP risk mapping:
+
+| ASI-02 | ASI-03 | ASI-04 | ASI-05 |
+|--------|--------|--------|--------|
+| `filesystem` `web` | `privilege` | `code` `shell` | `messaging` |
+
 ## Protocol foundation
 
 Transient implements [ATP 1.0](https://github.com/james-transient/transient-atp) the open protocol specification for autonomous agent action governance. Every governed action produces three canonical objects:
