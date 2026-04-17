@@ -11,7 +11,7 @@
 ---
 
 ```bash
-pip install transient-trace
+pipx install transient-trace
 ```
 
 ---
@@ -36,7 +36,7 @@ None of this requires changes to agent code. None of it can be bypassed by the a
 ## Getting started
 
 ```bash
-pip install transient-trace
+pipx install transient-trace
 ```
 
 Install governance shims:
