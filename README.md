@@ -28,6 +28,8 @@ Autonomous agents can now act without a human in the loop: write code, push to p
 
 Without a governance layer, there is no audit trail, no interception, no recourse. You cannot deploy agents at scale without knowing what they did, what they were authorised to do, and why. Guardrails inside the agent are not governance. They are instructions and instructions live inside the thing you are trying to govern.
 
+Transient is the first governance layer that operates outside the agent process. No code changes required. The agent cannot disable it, route around it, or see past it.
+
 ## What Transient does
 
 Transient intercepts at the infrastructure layer outside the agent process, below the application layer and produces tamper-evident receipts for every governed action.
