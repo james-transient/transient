@@ -2,13 +2,19 @@
   <img src="media/banner.png" alt="Transient" width="600" />
 </p>
 
-**The trust infrastructure for autonomous agents.**
+<p align="center">
+<strong>The trust infrastructure for autonomous agents.</strong>
+</p>
 
-[![License](https://img.shields.io/badge/license-proprietary-red.svg)](#)
-[![PyPI](https://img.shields.io/pypi/v/transient-trace.svg)](https://pypi.org/project/transient-trace/)
-[![Protocol](https://img.shields.io/badge/protocol-ATP%201.0-green.svg)](https://github.com/james-transient/transient-atp)
+<p align="center">
+<a href="#"><img src="https://img.shields.io/badge/license-proprietary-red.svg" /></a>
+<a href="https://pypi.org/project/transient-trace/"><img src="https://img.shields.io/pypi/v/transient-trace.svg" /></a>
+<a href="https://github.com/james-transient/transient-atp"><img src="https://img.shields.io/badge/protocol-ATP%201.0-green.svg" /></a>
+</p>
 
-*Created and maintained by [Transient Intelligence Ltd](https://transientintelligence.com)*
+<p align="center">
+<em>Created and maintained by <a href="https://transientintelligence.com">Transient Intelligence Ltd</a></em>
+</p>
 
 ---
 
