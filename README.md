@@ -24,11 +24,7 @@ Autonomous agents can now act without a human in the loop: write code, push to p
 
 Without a governance layer, there is no audit trail, no interception, no recourse. You cannot deploy agents at scale without knowing what they did, what they were authorised to do, and why. Guardrails inside the agent are not governance. They are instructions and instructions live inside the thing you are trying to govern.
 
-Transient is a governance layer that operates outside the agent process. No sandbox. No framework coupling. The agent cannot disable it, route around it, or see past it.
-
-## What Transient does
-
-Transient intercepts at the process boundary, outside the agent and below the framework. Every governed action produces a tamper-evident receipt before it reaches the system. Receipts are signed with Ed25519 and independently verifiable by any party with no dependency on the issuing system.
+Transient is a governance layer that operates outside the agent process. No sandbox. No framework coupling. It intercepts at the process boundary, outside the agent and below the framework. Every governed action produces a tamper-evident receipt before it reaches the system. Receipts are signed with Ed25519 and independently verifiable by any party with no dependency on the issuing system. The agent cannot disable it, route around it, or see past it.
 
 | Capability | What it provides |
 |------------|-----------------|
@@ -54,14 +50,14 @@ transient-trace wrap install git curl npm pip3 uv --auto-rc
 transient-trace wrap install-hook
 ```
 
-Boot your agent through Transient. Every session must be launched via `transient-trace run` this is how the governance layer wraps the process:
+Boot your agent through Transient. Every session must be launched via `transient-trace run`. This is how the governance layer wraps the process:
 
 ```bash
 transient-trace run claude
 transient-trace --mode strict --packages filesystem,code,privilege,shell run python agent.py
 ```
 
-Transient runs in three modes:
+If no mode is specified, Transient runs in `audit` mode by default. It records everything but never blocks. Transient runs in three modes:
 
 | Mode | Behaviour |
 |------|-----------|
@@ -117,7 +113,7 @@ Transient is designed for teams building or deploying autonomous agents who need
 
 ## How Transient runs
 
-Transient wraps your agent process. You launch your agent through `transient-trace run` — that is how the governed session is created, the receipt chain is started, and the popen hook is activated.
+Transient wraps your agent process. You launch your agent through `transient-trace run`. That is how the governed session is created, the receipt chain is started, and the popen hook is activated.
 
 ```bash
 transient-trace run python agent.py
