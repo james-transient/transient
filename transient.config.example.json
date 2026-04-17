@@ -1,0 +1,25 @@
+{
+  "project": "my-project",
+  "engines": {
+    "trace": true,
+    "recall": true,
+    "intelligence": true
+  },
+  "trace": {
+    "receipt_store": "~/transient-audit/receipts",
+    "state_dir": "~/transient-audit"
+  },
+  "recall": {
+    "endpoint": "http://localhost:8090",
+    "subject": "local-dev-user",
+    "tenant": "public"
+  },
+  "intelligence": {
+    "endpoint": "http://localhost:8080",
+    "health_path": "/api/health"
+  },
+  "dashboard": {
+    "port": 7474,
+    "open_browser": true
+  }
+}
