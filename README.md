@@ -46,10 +46,14 @@ transient-trace wrap install git curl npm pip3 uv --auto-rc
 transient-trace wrap install-hook
 ```
 
-Run an agent under governance:
+Boot your agent through Transient. Every session must be launched via `transient-trace run` — this is how the governance layer wraps the process:
 
 ```bash
 transient-trace --mode strict --packages filesystem,code,privilege,shell run python agent.py
+```
+
+```bash
+transient-trace run claude
 ```
 
 View the audit trail:

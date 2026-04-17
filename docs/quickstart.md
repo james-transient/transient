@@ -32,17 +32,19 @@ which git   # should return ~/.transient-trace/shims/git
 
 ---
 
-## 3. Run an agent under governance
+## 3. Boot your agent through Transient
+
+Transient requires you to launch your agent through it. You do not run your agent directly — you run it via `transient-trace run`. This is how the governance layer wraps the process.
 
 ```bash
 transient-trace run python agent.py
 ```
 
-Or wrap Claude Code:
-
 ```bash
 transient-trace run claude
 ```
+
+Every session must be started this way. If you launch your agent directly, Transient is not active for that session. The shims from step 2 provide always-on coverage for specific binaries, but full session governance requires `transient-trace run`.
 
 That's it. Every action the agent takes is now intercepted, evaluated, and receipted.
 
