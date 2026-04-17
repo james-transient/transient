@@ -82,20 +82,14 @@ transient-trace receipts list --outcome deny
 
 Transient ships curated rule sets aligned to the [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/):
 
-| Package | Blocks |
-|---------|--------|
-| `filesystem` | Bulk delete, sensitive paths (`~/.ssh`, `/etc`) |
-| `code` | `git push` to remote, unverified package installs |
-| `privilege` | `sudo`, `su`, chmod escalation, user management |
-| `shell` | `curl \| bash`, `eval`, inline code execution |
-| `web` | SSRF, mutation requests to internal hosts |
-| `messaging` | External broadcast, unknown recipients |
-
-OWASP risk mapping:
-
-| ASI-02 | ASI-03 | ASI-04 | ASI-05 |
-|--------|--------|--------|--------|
-| `filesystem` `web` | `privilege` | `code` `shell` | `messaging` |
+| Package | Blocks | OWASP |
+|---------|--------|-------|
+| `filesystem` | Bulk delete, sensitive paths (`~/.ssh`, `/etc`) | ASI-02 |
+| `code` | `git push` to remote, unverified package installs | ASI-04 |
+| `privilege` | `sudo`, `su`, chmod escalation, user management | ASI-03 |
+| `shell` | `curl \| bash`, `eval`, inline code execution | ASI-04 |
+| `web` | SSRF, mutation requests to internal hosts | ASI-02 |
+| `messaging` | External broadcast, unknown recipients | ASI-05 |
 
 ## Protocol foundation
 
