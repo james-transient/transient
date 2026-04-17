@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-<a href="#"><img src="https://img.shields.io/badge/license-proprietary-red.svg" /></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-Elastic%20License%202.0-blue.svg" /></a>
 <a href="https://pypi.org/project/transient-trace/"><img src="https://img.shields.io/pypi/v/transient-trace.svg" /></a>
 <a href="https://github.com/james-transient/transient-atp"><img src="https://img.shields.io/badge/protocol-ATP%201.0-green.svg" /></a>
 </p>
@@ -122,7 +122,9 @@ For complete coverage in production environments, pair Transient with a network 
 
 ## Licence
 
-Proprietary. All rights reserved. © 2026 Transient Intelligence Ltd.
+[Elastic License 2.0](LICENSE). © 2026 Transient Intelligence Ltd.
+
+You may use, run, and modify this software on your own systems. You may not offer it as a hosted or managed service to third parties.
 
 ---
 
