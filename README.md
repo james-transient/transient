@@ -80,7 +80,7 @@ transient-trace receipts list --outcome deny
 
 ## OWASP governance packages
 
-Transient ships curated rule sets aligned to the OWASP Agentic Security Initiative:
+Transient ships curated rule sets aligned to the [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/):
 
 | Package | Blocks |
 |---------|--------|

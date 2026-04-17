@@ -28,13 +28,13 @@ In audit mode, receipts record what *would* have fired in strict mode useful for
 
 ## OWASP governance packages
 
-Packages are curated rule sets aligned to the OWASP Agentic Security Initiative (ASI). Load with `--packages`:
+Packages are curated rule sets aligned to the [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/). Load with `--packages`:
 
 ```bash
 transient-trace --mode strict --packages filesystem,code,privilege,shell run python agent.py
 ```
 
-### `filesystem` ASI-02
+### `filesystem`
 
 | Rule | Triggers when |
 |------|---------------|
@@ -42,7 +42,7 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 | Deny | Delete target outside working directory |
 | Challenge | Path contains `~/.ssh`, `~/.aws`, `/etc`, `/usr`, `/bin` |
 
-### `code` ASI-04
+### `code`
 
 | Rule | Triggers when |
 |------|---------------|
@@ -50,7 +50,7 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 | Deny | `pip install`, `npm install` without a lockfile flag |
 | Challenge | Executing an unrecognised binary |
 
-### `privilege` ASI-03
+### `privilege`
 
 | Rule | Triggers when |
 |------|---------------|
@@ -60,7 +60,7 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 | Deny | `chown root` or `chown 0` |
 | Deny | `useradd`, `userdel`, `usermod`, `passwd` |
 
-### `shell` ASI-04
+### `shell`
 
 | Rule | Triggers when |
 |------|---------------|
@@ -69,14 +69,14 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 | Challenge | `bash -c "..."`, `sh -c "..."` |
 | Challenge | `python -c "..."`, `node -e "..."` |
 
-### `web` ASI-02
+### `web`
 
 | Rule | Triggers when |
 |------|---------------|
 | Deny | URL targets `169.254.*`, `10.*`, `192.168.*`, `localhost` (SSRF) |
 | Challenge | POST/PUT/PATCH/DELETE to any host |
 
-### `messaging` ASI-05
+### `messaging`
 
 | Rule | Triggers when |
 |------|---------------|
