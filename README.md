@@ -152,5 +152,3 @@ For complete coverage in production environments, pair Transient with a network 
 Free during alpha for evaluation and feedback. Free alpha access does not constitute a commitment to provide the software free of charge after the alpha phase ends. Commercial licensing will be introduced at general availability.
 
 ---
-
-Stay tuned for agents you can trust.
