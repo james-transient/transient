@@ -149,11 +149,11 @@ For complete coverage in production environments, pair Transient with a network 
 
 ```
 transient-trace     → install via pipx (the governance CLI)
-src/                → receipt bus (Node.js) — connects Trace receipts to Recall and Intelligence
+src/                → receipt bus — connects Trace receipts to Recall and Intelligence
 docs/               → full documentation
 ```
 
-The receipt bus is optional. You do not need it to use `transient-trace`. It is only needed if you are running Transient Recall or Transient Intelligence alongside Trace.
+`transient-trace` is the entry point. The receipt bus runs alongside it and feeds governed actions into Recall (memory) and Intelligence (verification) in real time.
 
 ## Licence
 
