@@ -52,7 +52,7 @@ transient-trace wrap install-hook
 transient-trace wrap install-hook --uninstall
 ```
 
-Installs a `.pth` hook into Python's site-packages so `subprocess.Popen` calls with absolute paths are intercepted. Requires `TRANSIENT_TRACE_HOOK=1` in the environment to activate.
+Installs the subprocess intercept so Python processes using absolute binary paths are governed. Requires `TRANSIENT_TRACE_HOOK=1` in the environment to activate.
 
 ---
 
@@ -167,7 +167,7 @@ transient-trace uninstall
 transient-trace uninstall --purge-data
 ```
 
-Removes all shims, PATH entries, and the Popen hook. `--purge-data` also removes config and receipts.
+Removes all shims, PATH entries, and the subprocess intercept. `--purge-data` also removes config and receipts.
 
 ---
 
@@ -182,6 +182,6 @@ Removes all shims, PATH entries, and the Popen hook. `--purge-data` also removes
 | `TRANSIENT_TRACE_PARENT_RUN_ID` | Set when a governed process runs another governed process |
 | `TRANSIENT_TRACE_LEARNING` | `1` to enable self-learning |
 | `TRANSIENT_TRACE_PACKAGES` | Comma-separated package names |
-| `TRANSIENT_TRACE_HOOK` | `1` to activate the Popen `.pth` hook |
+| `TRANSIENT_TRACE_HOOK` | `1` to activate the subprocess intercept |
 
 `MODE` and `POLICY_JSON` are locked at Client initialisation an agent cannot override them after the process starts.

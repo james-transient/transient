@@ -224,7 +224,7 @@ Useful for generating a tailored policy from observed behaviour rather than writ
 transient-trace uninstall
 ```
 
-Removes all shims, the Popen hook, and the PATH entry from shell RC files. Your receipts and config are preserved.
+Removes all shims, the subprocess intercept, and the PATH entry from shell RC files. Your receipts and config are preserved.
 
 ### Full purge (removes everything)
 
@@ -249,8 +249,8 @@ transient-trace uninstall --purge-data
 # Remove shims
 rm -rf ~/.transient-trace/shims
 
-# Remove Popen hook
-find ~/Library/Python -name "transient_trace_hook.pth" -delete 2>/dev/null; true
+# Remove subprocess intercept
+transient-trace uninstall  # handles intercept removal automatically
 
 # Remove PATH entry from shell RC
 # Edit ~/.zshrc and ~/.zshenv manually to remove the transient-trace shims line
@@ -275,13 +275,13 @@ Transient Trace is currently tested and supported on **macOS (Apple Silicon and 
 | Path | Status |
 |------|--------|
 | Terminal subprocess calls (PATH-resolved) | ✓ Covered by shims |
-| Python subprocess with absolute path | ✓ Covered by Popen hook |
+| Python subprocess with absolute path | ✓ Covered by subprocess intercept |
 | Native Python network calls (urllib, requests, httpx) | ✗ Not intercepted |
 | Node.js `child_process` with absolute paths | ✗ Not intercepted |
 | GUI applications and non-terminal agent interfaces | ✗ Not intercepted |
 | Agents that invoke binaries via IDE extensions or browser automation | ✗ Not intercepted |
 | Actions taken by processes running as root | ✗ Shim dir may not be in root's PATH |
 
-If your agent runs through a non-terminal interface an IDE extension, a browser-based tool, a custom GUI subprocess calls may bypass the PATH shim layer entirely. The Popen hook will still catch Python subprocess calls with absolute paths, but there is no coverage for other runtimes.
+If your agent runs through a non-terminal interface an IDE extension, a browser-based tool, a custom GUI subprocess calls may bypass the PATH shim layer entirely. The subprocess intercept will still catch Python subprocess calls with absolute paths, but there is no coverage for other runtimes.
 
 **This is early software.** The governance layer is functional and tested on macOS, but production use should include additional controls (network proxy, OS-level firewall, container isolation) for complete coverage.

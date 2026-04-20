@@ -47,7 +47,7 @@ Trace intercepts actions at two levels:
 
 **PATH shims** thin scripts written to `~/.transient-trace/shims/`. When an agent calls `git push`, the shell resolves `git` to the shim first. The shim evaluates the action against policy before the real binary ever runs.
 
-**Popen hook** a Python monkey-patch on `subprocess.Popen` that catches absolute-path subprocess calls (`/usr/bin/git`), which bypass PATH entirely. Installed via a `.pth` file in Python's site-packages.
+**Subprocess intercept** catches subprocess calls that use absolute binary paths (`/usr/bin/git`), which bypass PATH entirely. Installed automatically when running under governance.
 
 Every intercepted action goes through the same pipeline:
 
@@ -117,7 +117,7 @@ These values are locked at Client initialisation time. The agent cannot override
 | Path | Example |
 |---|---|
 | Shell-resolved binary (PATH shim) | `git push`, `curl https://...` |
-| Python subprocess by absolute path (Popen hook) | `/usr/bin/git push` from Python |
+| Python subprocess by absolute path (subprocess intercept) | `/usr/bin/git push` from Python |
 | Inherited child Python processes | Nested agents, tool runners |
 
 ## What's not covered
@@ -125,13 +125,13 @@ These values are locked at Client initialisation time. The agent cannot override
 | Path | Why |
 |---|---|
 | Native Python network calls (urllib, requests, httpx) | No socket-level hook only subprocess calls |
-| Node.js `child_process` with absolute paths | Popen hook is Python-only |
+| Node.js `child_process` with absolute paths | subprocess intercept is Python-only |
 | GUI applications and IDE extensions | Non-terminal agent interfaces bypass PATH shims |
 | Browser automation and headless browsers | Not intercepted |
 | Agents running as root | Shim dir may not be in root's PATH |
 | Binaries not in the shim set | Only shimmed binaries are intercepted |
 
-If your agent runs through a non-terminal interface an IDE plugin, browser-based tool, or custom GUI subprocess calls may not route through the PATH shim. The Popen hook covers Python absolute-path calls but there is no equivalent for other runtimes.
+If your agent runs through a non-terminal interface an IDE plugin, browser-based tool, or custom GUI subprocess calls may not route through the PATH shim. The subprocess intercept covers Python absolute-path calls but there is no equivalent for other runtimes.
 
 For complete coverage, pair Transient with a network proxy or eBPF-based egress filter at the OS level.
 
