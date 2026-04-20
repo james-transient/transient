@@ -50,8 +50,8 @@ pipx install transient-trace
 Install governance shims:
 
 ```bash
-transient-trace wrap install git curl npm pip3 uv --auto-rc
-transient-trace wrap install-hook
+transient-trace wrap install git curl npm pip3 uv sudo --auto-rc
+source ~/.zshrc
 ```
 
 Boot your agent through Transient. Every session must be launched via `transient-trace run`. This is how the governance layer wraps the process:
@@ -117,7 +117,7 @@ Transient is designed for teams building or deploying autonomous agents who need
 
 ## How Transient runs
 
-Transient wraps your agent process. You launch your agent through `transient-trace run`. That is how the governed session is created, the receipt chain is started, and the popen hook is activated.
+Transient wraps your agent process. You launch your agent through `transient-trace run`. That is how the governed session is created, the receipt chain is started, and subprocess interception is activated.
 
 ```bash
 transient-trace run python agent.py
@@ -144,6 +144,16 @@ For complete coverage in production environments, pair Transient with a network 
 - [Verification](docs/intelligence.md)
 - [CLI Reference](docs/cli-reference.md)
 - [Troubleshooting](docs/troubleshooting.md)
+
+## Repository structure
+
+```
+transient-trace     → install via pipx (the governance CLI)
+src/                → receipt bus (Node.js) — connects Trace receipts to Recall and Intelligence
+docs/               → full documentation
+```
+
+The receipt bus is optional. You do not need it to use `transient-trace`. It is only needed if you are running Transient Recall or Transient Intelligence alongside Trace.
 
 ## Licence
 
