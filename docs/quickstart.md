@@ -19,8 +19,8 @@ pipx install transient-trace
 Shims intercept binaries at the OS level. Every call to `git`, `curl`, `npm` etc. from any agent, script, or tool on the machine goes through governance first.
 
 ```bash
-transient-trace wrap install git curl npm pip3 uv --auto-rc
-transient-trace wrap install-hook
+transient-trace wrap install git curl npm pip3 uv sudo --auto-rc
+source ~/.zshrc
 ```
 
 Verify everything is wired up:
