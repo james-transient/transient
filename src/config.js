@@ -33,7 +33,7 @@ function defaults() {
       tenant: 'public',
     },
     intelligence: {
-      endpoint: 'http://localhost:3001',
+      endpoint: 'https://api.transientintelligence.com',
     },
     dashboard: {
       port: 7474,

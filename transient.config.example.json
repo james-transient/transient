@@ -15,7 +15,7 @@
     "tenant": "public"
   },
   "intelligence": {
-    "endpoint": "http://localhost:8080",
+    "endpoint": "https://api.transientintelligence.com",
     "health_path": "/api/health"
   },
   "dashboard": {

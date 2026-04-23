@@ -2,34 +2,48 @@
  * intelligence.js — Receipt bus subscriber for Transient Intelligence
  *
  * Reacts to content events in the receipt stream:
- * - git commits → verify the diff
+ * - git commits/pushes → verify the diff against declared intent
  * - file writes → verify written content
  * - network requests → flag outbound payloads
  *
  * The agent does not call Intelligence. Intelligence listens to Trace receipts
  * and triggers automatically on content-producing events.
+ *
+ * API key: set TRANSIENT_INTELLIGENCE_API_KEY env var or intelligence.api_key
+ * in transient.config.json.
  */
+
+const TI_ANSWER_PATH = '/api/models/v1/answer';
 
 export class IntelligenceSubscriber {
   constructor(config) {
     this.endpoint = config.endpoint;
+    this.apiKey = config.api_key || process.env.TRANSIENT_INTELLIGENCE_API_KEY || '';
     this.config = config;
     this.available = false;
   }
 
   async init() {
-    const healthPath = this.config?.health_path || '/healthz';
+    if (!this.apiKey) {
+      console.log('[intelligence] no API key — set TRANSIENT_INTELLIGENCE_API_KEY to enable');
+      return this;
+    }
+
+    const healthPath = this.config?.health_path || '/api/health';
     try {
-      const res = await fetch(`${this.endpoint}${healthPath}`, { signal: AbortSignal.timeout(3000) });
-      this.available = res.ok;
-      if (this.available) {
-        console.log('[intelligence] connected');
-      } else {
-        console.log('[intelligence] not available — skipping');
+      const res = await fetch(`${this.endpoint}${healthPath}`, {
+        headers: { 'x-api-key': this.apiKey },
+        signal: AbortSignal.timeout(5000),
+      });
+      // Accept 200 or 404 — either means the server is up; 401/403 means bad key
+      if (res.status === 401 || res.status === 403) {
+        console.log('[intelligence] API key rejected — check TRANSIENT_INTELLIGENCE_API_KEY');
+        return this;
       }
+      this.available = true;
+      console.log('[intelligence] connected');
     } catch {
       console.log('[intelligence] not reachable — skipping');
-      this.available = false;
     }
     return this;
   }
@@ -44,14 +58,102 @@ export class IntelligenceSubscriber {
       this._verifyGitAction(receipt).catch(err =>
         console.error('[intelligence] git verify failed:', err.message)
       );
+    } else if (actionClass === 'network') {
+      this._verifyNetworkAction(receipt).catch(err =>
+        console.error('[intelligence] network verify failed:', err.message)
+      );
     }
   }
 
   async _verifyGitAction(receipt) {
     const command = receipt?.intent?.target?.command || '';
     if (!command.includes('git commit') && !command.includes('git push')) return;
-    console.log(`[intelligence] flagging git action for verification: ${command.slice(0, 80)}`);
-    // Intelligence verification happens asynchronously
-    // Results surface in the dashboard, not in the agent's flow
+
+    const evidence = JSON.stringify({
+      action: receipt?.intent?.action,
+      command,
+      target: receipt?.intent?.target,
+      context: receipt?.intent?.context,
+      outcome: receipt?.decision?.outcome,
+      timestamp: receipt?.created_at,
+    });
+
+    console.log(`[intelligence] verifying git action: ${command.slice(0, 80)}`);
+
+    const result = await this._answer(
+      evidence,
+      `Is this git action (${command}) consistent with the agent's declared goal? ` +
+      'Does it modify files outside the expected scope? ' +
+      'Are there any signs of privilege escalation or policy bypass attempts?'
+    );
+
+    if (result) {
+      const confidence = result.factual_confidence?.label || 'unknown';
+      const summary = result.answer?.summary || '';
+      console.log(`[intelligence] git verdict: ${confidence} — ${summary.slice(0, 120)}`);
+    }
+  }
+
+  async _verifyNetworkAction(receipt) {
+    const host = receipt?.intent?.target?.host || '';
+    const command = receipt?.intent?.target?.command || '';
+    if (!host && !command) return;
+
+    const evidence = JSON.stringify({
+      action: receipt?.intent?.action,
+      target: receipt?.intent?.target,
+      context: receipt?.intent?.context,
+      outcome: receipt?.decision?.outcome,
+      timestamp: receipt?.created_at,
+    });
+
+    console.log(`[intelligence] verifying network action: ${host || command.slice(0, 60)}`);
+
+    const result = await this._answer(
+      evidence,
+      `Is this outbound network request to ${host} expected for the agent's declared task? ` +
+      'Is it sending data that should not leave the local environment?'
+    );
+
+    if (result) {
+      const confidence = result.factual_confidence?.label || 'unknown';
+      const summary = result.answer?.summary || '';
+      console.log(`[intelligence] network verdict: ${confidence} — ${summary.slice(0, 120)}`);
+    }
+  }
+
+  async _answer(input, question, sessionId = null) {
+    const body = { question, top_k: 5 };
+    if (sessionId) {
+      body.session_id = sessionId;
+    } else {
+      body.input = input;
+    }
+
+    const res = await fetch(`${this.endpoint}${TI_ANSWER_PATH}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': this.apiKey,
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!res.ok) {
+      console.error(`[intelligence] API returned ${res.status}`);
+      return null;
+    }
+
+    const data = await res.json();
+
+    if (data.mode === 'answer_wait_then_retry') {
+      // Async indexing in progress — retry once after the suggested delay
+      const waitMs = (data.retry_after_seconds || 10) * 1000;
+      await new Promise(r => setTimeout(r, Math.min(waitMs, 30_000)));
+      return this._answer(null, question, data.session_id);
+    }
+
+    return data;
   }
 }

@@ -112,6 +112,11 @@ export class ReceiptBus extends EventEmitter {
 
         if (sessionId) batch.sessions.add(sessionId);
 
+        if (receipt?.type === 'learning_promoted') {
+          this._notify({ type: 'learning', receipt });
+          continue;
+        }
+
         if (outcome === 'allow') batch.allowed++;
         if (outcome === 'deny' || receipt?.type === 'GovernanceDenyEvent') {
           batch.blocked++;
