@@ -49,6 +49,25 @@ export class ReceiptBus extends EventEmitter {
     this.subscribers.push(subscriber);
   }
 
+  unregister(subscriber) {
+    this.subscribers = this.subscribers.filter(s => s !== subscriber);
+  }
+
+  setReceiptStore(receiptStore) {
+    const next = resolve(receiptStore);
+    if (next === this.receiptStore) return false;
+
+    this.receiptStore = next;
+    this.lastProcessedTime = Date.now() - POLL_INTERVAL_MS;
+
+    if (!existsSync(this.receiptStore)) {
+      mkdirSync(this.receiptStore, { recursive: true });
+    }
+
+    console.log(`[receipt-bus] switched receipt store -> ${this.receiptStore}`);
+    return true;
+  }
+
   _poll() {
     const since = this.lastProcessedTime;
     this.lastProcessedTime = Date.now();
