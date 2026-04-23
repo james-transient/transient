@@ -41,7 +41,7 @@ None of this requires changes to agent code. None of it can be bypassed by the a
 
 ## Recent updates
 
-- New TUI dashboard: You can watch your agents with live receipts, alter global configs, and change/add permissions.
+- [New TUI dashboard](docs/dashboard.md): You can watch your agents with live receipts, alter global configs, and change/add permissions.
 
 ## Getting started
 
@@ -146,6 +146,7 @@ For complete coverage in production environments, pair Transient with a network 
 - [Verification](docs/intelligence.md)
 - [CLI Reference](docs/cli-reference.md)
 - [Troubleshooting](docs/troubleshooting.md)
+- [Dashboard (TUI)](docs/dashboard.md)
 
 ## Repository structure
 
