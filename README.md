@@ -41,7 +41,7 @@ None of this requires changes to agent code. None of it can be bypassed by the a
 
 ## Recent updates
 
-- New TUI dashboard
+- New TUI dashboard: You can watch your agents with live receipts, alter global configs, and change/add permissions.
 
 ## Getting started
 
