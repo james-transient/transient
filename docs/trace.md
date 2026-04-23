@@ -4,6 +4,10 @@ Governance at the OS layer. Intercepts every subprocess call before execution, e
 
 Install: `pip install transient-trace`
 
+GitHub repositories:
+- Transient Trace (implementation): https://github.com/james-transient/transient-trace
+- ATP open protocol (spec): https://github.com/james-transient/transient-atp
+
 ---
 
 ## Governance modes

@@ -2,6 +2,10 @@
 
 Get your agent governed in under five minutes.
 
+GitHub repositories:
+- Transient Trace (implementation): https://github.com/james-transient/transient-trace
+- ATP open protocol (spec): https://github.com/james-transient/transient-atp
+
 ---
 
 ## 1. Install Transient Trace
