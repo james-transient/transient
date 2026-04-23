@@ -39,6 +39,10 @@ Transient is a governance layer that operates outside the agent process. No sand
 
 None of this requires changes to agent code. None of it can be bypassed by the agent.
 
+## Recent updates
+
+- New TUI dashboard
+
 ## Getting started
 
 Transient is the product. `transient-trace` is the CLI that powers the governance layer. Install it with:
