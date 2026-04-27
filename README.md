@@ -129,9 +129,21 @@ transient-trace --mode strict --packages filesystem,code,privilege,shell run pyt
 
 Launching an agent directly without `transient-trace run` means there is no session context and no linked receipt chain. Permanent shims will still intercept specific binaries, but the receipts are unconnected. For full governance, always start through `transient-trace run`.
 
-## Current limitations
+## Platform support
 
-Tested and supported on macOS only. Linux is in development. Windows is not currently supported.
+| Platform | Status |
+|---|---|
+| macOS (Apple Silicon, Intel) | Supported |
+| Ubuntu 22.04 LTS | Supported |
+| Ubuntu 24.04 LTS | Supported |
+| Debian 12+ | Supported |
+| RHEL 9 / Rocky 9 / Amazon Linux 2023 | Supported |
+| Windows | Not supported |
+| Alpine Linux (musl) | Not supported |
+
+See [Linux setup guide](docs/linux.md) for installation instructions on Linux.
+
+## Current limitations
 
 Coverage is strongest for terminal-based agents. Agents running through IDE extensions, browser interfaces, or GUI tools may not have full interception. Native Python network calls are not covered at the socket level.
 
@@ -141,6 +153,7 @@ For complete coverage in production environments, pair Transient with a network 
 
 - [Quickstart](docs/quickstart.md)
 - [How it works](docs/how-it-works.md)
+- [Linux setup](docs/linux.md)
 - [Governance](docs/trace.md)
 - [Memory](docs/recall.md)
 - [Verification](docs/intelligence.md)
