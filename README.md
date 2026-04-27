@@ -14,6 +14,7 @@
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-proprietary-red.svg" /></a>
 <a href="https://pypi.org/project/transient-trace/"><img src="https://img.shields.io/pypi/v/transient-trace.svg" /></a>
 <a href="https://github.com/james-transient/transient-atp"><img src="https://img.shields.io/badge/protocol-ATP%201.0-green.svg" /></a>
+<a href="docs/linux.md"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-blue.svg" /></a>
 </p>
 
 ---
