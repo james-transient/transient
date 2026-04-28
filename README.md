@@ -42,6 +42,7 @@ None of this requires changes to agent code. None of it can be bypassed by the a
 
 ## Recent updates
 
+- New compliance attestation command: `transient-trace verify` now generates a signed OWASP Agentic + EU AI Act attestation from your receipt chain.
 - [New TUI dashboard](docs/dashboard.md): You can watch your agents with live receipts, alter global configs, and change/add permissions.
 
 ## Getting started
