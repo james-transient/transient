@@ -14,6 +14,16 @@
  */
 
 const TI_ANSWER_PATH = '/api/models/v1/answer';
+const MAX_ANSWER_RETRIES = 3;
+
+function sanitizePromptValue(value, maxLen = 200) {
+  const normalized = String(value || '')
+    .replace(/[\r\n\t]+/g, ' ')
+    .replace(/[\u0000-\u001f\u007f]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return normalized.slice(0, maxLen);
+}
 
 export class IntelligenceSubscriber {
   constructor(config) {
@@ -68,6 +78,7 @@ export class IntelligenceSubscriber {
   async _verifyGitAction(receipt) {
     const command = receipt?.intent?.target?.command || '';
     if (!command.includes('git commit') && !command.includes('git push')) return;
+    const safeCommand = sanitizePromptValue(command, 120);
 
     const evidence = JSON.stringify({
       action: receipt?.intent?.action,
@@ -78,11 +89,11 @@ export class IntelligenceSubscriber {
       timestamp: receipt?.created_at,
     });
 
-    console.log(`[intelligence] verifying git action: ${command.slice(0, 80)}`);
+    console.log(`[intelligence] verifying git action: ${safeCommand.slice(0, 80)}`);
 
     const result = await this._answer(
       evidence,
-      `Is this git action (${command}) consistent with the agent's declared goal? ` +
+      `Is this git action (${safeCommand}) consistent with the agent's declared goal? ` +
       'Does it modify files outside the expected scope? ' +
       'Are there any signs of privilege escalation or policy bypass attempts?'
     );
@@ -123,37 +134,52 @@ export class IntelligenceSubscriber {
   }
 
   async _answer(input, question, sessionId = null) {
-    const body = { question, top_k: 5 };
-    if (sessionId) {
-      body.session_id = sessionId;
-    } else {
-      body.input = input;
+    const safeQuestion = sanitizePromptValue(question, 1000);
+    let attempt = 0;
+    let nextSessionId = sessionId;
+    let nextInput = input;
+
+    while (attempt <= MAX_ANSWER_RETRIES) {
+      const body = { question: safeQuestion, top_k: 5 };
+      if (nextSessionId) {
+        body.session_id = nextSessionId;
+      } else {
+        body.input = nextInput;
+      }
+
+      const res = await fetch(`${this.endpoint}${TI_ANSWER_PATH}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': this.apiKey,
+        },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(15000),
+      });
+
+      if (!res.ok) {
+        console.error(`[intelligence] API returned ${res.status}`);
+        return null;
+      }
+
+      const data = await res.json();
+
+      if (data.mode !== 'answer_wait_then_retry') {
+        return data;
+      }
+
+      attempt += 1;
+      if (attempt > MAX_ANSWER_RETRIES) {
+        console.warn('[intelligence] max retry attempts reached; skipping verification');
+        return null;
+      }
+
+      const waitMs = Math.min(Math.max((data.retry_after_seconds || 10) * 1000, 250), 30_000);
+      await new Promise((r) => setTimeout(r, waitMs));
+      nextSessionId = data.session_id || nextSessionId;
+      nextInput = null;
     }
 
-    const res = await fetch(`${this.endpoint}${TI_ANSWER_PATH}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': this.apiKey,
-      },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(15000),
-    });
-
-    if (!res.ok) {
-      console.error(`[intelligence] API returned ${res.status}`);
-      return null;
-    }
-
-    const data = await res.json();
-
-    if (data.mode === 'answer_wait_then_retry') {
-      // Async indexing in progress — retry once after the suggested delay
-      const waitMs = (data.retry_after_seconds || 10) * 1000;
-      await new Promise(r => setTimeout(r, Math.min(waitMs, 30_000)));
-      return this._answer(null, question, data.session_id);
-    }
-
-    return data;
+    return null;
   }
 }
